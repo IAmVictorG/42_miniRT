@@ -4,11 +4,14 @@ INCLUDES = includes
 
 LINUX_FLAGS = -lm -lX11 -lXext -lpthread
 
-SRCS =  $(addprefix srcs/, main.c utils_init.c events.c render.c camera.c) \
-		$(addprefix srcs/parsing/, parse_utils.c parse.c) \
-		$(addprefix srcs/utils/, utils.c utils_vec3.c)
+MAC_FLAGS = -framework OpenGL -framework AppKit
 
-LIBS = $(addprefix includes/, libft.a libftprintf.a)
+SRCS =  $(addprefix srcs/, main.c utils_init.c render.c camera.c intersection.c) \
+		$(addprefix srcs/parsing/, parse_utils.c parse.c) \
+		$(addprefix srcs/utils/, utils.c utils_vec3.c) \
+		$(addprefix srcs/events/, events.c mouse_events.c)
+
+LIBS = $(addprefix includes/, libft/libft.a)
 OBJS	= ${SRCS:.c=.o}
 CFLAGS	=  -Wall -Wextra -Werror
 CC		= gcc
@@ -18,8 +21,9 @@ RM		= rm -f
 	$(CC) $(CFLAGS) -I $(INCLUDES) -c $< -o ${<:.c=.o}
 
 $(NAME): $(OBJS)
-	make -C includes/minilibx-linux
-	$(CC) $(CFLAGS) $(OBJS) $(LIBS) includes/minilibx-linux/libmlx.a -fsanitize=address $(LINUX_FLAGS) -o $(NAME)
+	make -C includes/libft
+	make -C includes/minilibx-openGL
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) includes/minilibx-openGL/libmlx.a -fsanitize=address $(MAC_FLAGS) -o $(NAME)
 
 
 all:		$(NAME)
@@ -29,6 +33,7 @@ clean:
 
 fclean:		clean
 			$(RM) $(NAME)
+			make fclean -C includes/libft
 
 re:			fclean all
 

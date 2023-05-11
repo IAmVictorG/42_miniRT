@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "header.h": "c",
+        "__node_handle": "c",
+        "type_traits": "c"
+    }
+}

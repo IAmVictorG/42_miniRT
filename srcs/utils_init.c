@@ -27,12 +27,20 @@ t_img *init_img(t_vars *vars, int width, int height)
 void    init_utils(t_utils *utils)
 {
     utils->vars = (t_vars *)malloc(sizeof(t_vars));
-    if (!utils->vars) {
+    if (!utils->vars)
+    {
         perror("Error allocating memory for t_vars");
         exit(1);
+    }
+    utils->move = (t_move *)malloc(sizeof(t_move));
+    if (!utils->move)
+    {
+        perror("Error allocating memory for t_vars");
+        exit(1); 
     }
     utils->vars->mlx_ptr = mlx_init();
     utils->vars->win_ptr = mlx_new_window(utils->vars->mlx_ptr, WIDTH, HEIGHT, "miniRT");
     utils->img = init_img(utils->vars, WIDTH, HEIGHT);
-
+    utils->move->init_position = ((t_vec2) {0,0});
+    utils->move->mouse_is_pressed = 0;
 }

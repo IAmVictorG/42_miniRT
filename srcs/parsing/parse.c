@@ -114,13 +114,13 @@ static void parse_plane(t_scene *scene, char *line)
     go_to_next_arg(&line);
     r = get_arg(line);
 
-    set_position(r, &scene->plans->dir);
+    set_position(r, &scene->plans->normal);
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
     set_rgb(r, &scene->plans->color);
     free(r);
-    printf("Plan Pos %f,%f,%f | Dir %f,%f,%f | Color %d,%d,%d\n", scene->plans->pos.x, scene->plans->pos.y, scene->plans->pos.z, scene->plans->dir.x, scene->plans->dir.y, scene->plans->dir.z, scene->plans->color.r, scene->plans->color.g, scene->plans->color.b);
+    printf("Plan Pos %f,%f,%f | Dir %f,%f,%f | Color %d,%d,%d\n", scene->plans->pos.x, scene->plans->pos.y, scene->plans->pos.z, scene->plans->normal.x, scene->plans->normal.y, scene->plans->normal.z, scene->plans->color.r, scene->plans->color.g, scene->plans->color.b);
 }
 
 /*static void parse_square(t_scene *scene, char *line)
