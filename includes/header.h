@@ -195,5 +195,4 @@ int		mouse_press(int key, int x, int y, t_utils *utils);
 int		mouse_release(int button, int x, int y, t_utils *utils);
 int		mouse_move(int x, int y, t_utils *utils);
 
-
 #endif
