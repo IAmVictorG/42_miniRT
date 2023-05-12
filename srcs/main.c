@@ -1,5 +1,8 @@
 #include "../includes/header.h"
 
+
+
+
 int read_rt_file(const char *filename, t_scene *scene)
 {
     FILE *file;
@@ -10,7 +13,9 @@ int read_rt_file(const char *filename, t_scene *scene)
     file = fopen(filename, "r");
     if (file == NULL)
         return -1;
-
+    init_objects_nb(file, scene);
+    fclose(file);
+    file = fopen(filename, "r");
     while ((read = getline(&line, &len, file)) != -1)
     {
         parse_line(scene, line);
@@ -50,6 +55,9 @@ int main(int argc, char const *argv[])
     //render_scene(&scene, &utils);
     //display_image(&utils);
 
+
+    printf("SPHERE 1 %f\n", utils.scene->spheres[0].radius);
+    printf("SPHERE 2 %f\n", utils.scene->spheres[1].radius);
     event_handler(&utils);
     
 

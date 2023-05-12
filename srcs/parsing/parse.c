@@ -75,26 +75,32 @@ static void parse_light(t_scene *scene, char *line)
 static void parse_sphere(t_scene *scene, char *line)
 {
     char *r;
+    static int i = 0;
 
-    scene->spheres = (t_sphere *)malloc(sizeof(t_sphere));
-    if (scene->lights == NULL)
+    if (i == 0)
     {
-        printf("Malloc error\n");
-        return ;
+        scene->spheres = (t_sphere *)malloc(sizeof(t_sphere) * scene->num_spheres);
+        if (scene->spheres == NULL)
+        {
+            printf("Malloc error\n");
+            return;
+        }
     }
+    printf("I %d\n", i);
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_position(r, &scene->spheres->center);
+    set_position(r, &scene->spheres[i].center);
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
-    scene->spheres->radius = atof(r);
+    scene->spheres[i].radius = atof(r);
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_rgb(r, &scene->spheres->color);
-    printf("Sphere position %f,%f,%f | radius %f | Color %d,%d,%d\n", scene->spheres->center.x, scene->spheres->center.y, scene->spheres->center.z, scene->spheres->radius, scene->spheres->color.r, scene->spheres->color.g, scene->spheres->color.b);
+    set_rgb(r, &scene->spheres[i].color);
+    printf("Sphere position %f,%f,%f | radius %f | Color %d,%d,%d\n", scene->spheres[i].center.x, scene->spheres[i].center.y, scene->spheres[i].center.z, scene->spheres[i].radius, scene->spheres[i].color.r, scene->spheres[i].color.g, scene->spheres[i].color.b);
     free(r);
+    i++;
 }
 
 static void parse_plane(t_scene *scene, char *line)

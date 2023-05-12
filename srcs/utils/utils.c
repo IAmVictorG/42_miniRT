@@ -1,5 +1,7 @@
 #include "../../includes/header.h"
 
+
+
 int is_space(char c)
 {
     return (c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == '\f');

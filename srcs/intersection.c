@@ -17,7 +17,7 @@ bool intersect_sphere(t_ray ray, t_sphere sphere, float t[2])
         return false; 
     else 
     {
-        t[0] = (-b + sqrt(discriminant)) / (2.0f * a);
+        //t[0] = (-b + sqrt(discriminant)) / (2.0f * a);
         t[1] = (-b - sqrt(discriminant)) / (2.0f * a);
         return true;
     }

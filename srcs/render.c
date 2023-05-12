@@ -61,36 +61,48 @@ t_vec3 calculate_ray_direction(t_utils *utils, int pixel_x, int pixel_y, int ima
     return ray_direction;
 }
 
-
-
 void render_image(t_utils *utils)
 {
     t_ray ray;
     float t[2];
     t_camera *camera = utils->scene->camera;
+    bool has_intersect;
+    int closest;
+    float hit_distance;
 
     for (int y = 0; y < HEIGHT; y++)
     {
         for (int x = 0; x < WIDTH; x++)
         {
+            hit_distance = -1.0f;
+            has_intersect = false;
             ray.origin = camera->pos;
             ray.direction = calculate_ray_direction(utils, x, y, WIDTH, HEIGHT);
-            if (intersect_sphere(ray, *(utils->scene->spheres), t) == true)
+            for (int i = 0; i < utils->scene->num_spheres; i++)
+            {
+                if (intersect_sphere(ray, utils->scene->spheres[i], t) == true)
+                {
+                    has_intersect = true;
+                    if (hit_distance > t[1] || hit_distance < 0.0f)
+                    {
+                        hit_distance = t[1];
+                        closest = i;
+                    }
+
+                }
+            }            
+            if (has_intersect == true)
             {
                 t_vec3 hit_point = vec3_add(ray.origin, vec3_multiply_scalar(ray.direction, t[1]));
-                t_vec3 normal = vec3_normalize(vec3_add(hit_point, vec3_multiply_scalar(utils->scene->spheres->center, -1)));
+                t_vec3 normal = vec3_normalize(vec3_add(hit_point, vec3_multiply_scalar(utils->scene->spheres[closest].center, -1)));
                 t_vec3 light_direction = vec3_normalize(vec3_add(utils->scene->lights->pos, vec3_multiply_scalar(hit_point, -1)));
 
                 float d = vec3_dot_product(normal, light_direction);
                 //d = fmax(0, d);
                 d = fmax(utils->scene->alight->intensity, d);
-                int color = create_trgb(0, utils->scene->spheres->color.r * d, utils->scene->spheres->color.g * d, utils->scene->spheres->color.b * d);
+                int color = create_trgb(0, utils->scene->spheres[closest].color.r * d, utils->scene->spheres[closest].color.g * d, utils->scene->spheres[closest].color.b * d);
                 my_mlx_pixel_put(utils->img, x, y, color);
             }
-            /*else if(intersect_plane(ray, *(utils->scene->plans), t))
-            {
-                my_mlx_pixel_put(utils->img, x, y, create_trgb(0, utils->scene->plans->color.r, utils->scene->plans->color.g, utils->scene->plans->color.b));
-            }*/
             else
             {
                 my_mlx_pixel_put(utils->img, x, y, BLACK);

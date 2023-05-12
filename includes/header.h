@@ -9,7 +9,9 @@
 # include <pthread.h>
 # include <stdbool.h>
 # include <time.h>
+# include <limits.h>
 # include "minilibx-openGL/mlx.h"
+# include "get_next_line/get_next_line.h"
 # include "libft.h"
 # include "scene.h"
 
@@ -81,6 +83,7 @@ typedef struct s_utils
 
 
 void	init_utils(t_utils *utils);
+void    init_objects_nb(FILE *file, t_scene *scene);
 void	event_handler(t_utils *utils);
 void	parse_line(t_scene *scene, char *line);
 int		read_rt_file(const char *filename, t_scene *scene);
