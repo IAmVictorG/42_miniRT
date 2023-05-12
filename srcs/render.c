@@ -2,7 +2,14 @@
 
 t_vec3 calculate_ray_direction(t_utils *utils, int pixel_x, int pixel_y, int image_width, int image_height)
 {
+    //t_camera *camera;
+    (void) utils;
     float aspect_ratio;
+
+    aspect_ratio = (float) image_width / (float) image_height;
+
+    //camera = &utils->scene->camera;
+    /*float aspect_ratio;
     float scale; 
     float x;
     float y;
@@ -17,22 +24,54 @@ t_vec3 calculate_ray_direction(t_utils *utils, int pixel_x, int pixel_y, int ima
 
     ray_direction.x = image_plane_point.x;
     ray_direction.y = image_plane_point.y;
-    ray_direction.z = image_plane_point.z;
+    ray_direction.z = image_plane_point.z;*/
+    
+    t_vec3 ray_origine;
+    t_vec3 ray_direction;
+    t_vec2 coord;
+
+    ray_origine = (t_vec3) {0,0,0}; //vec3_normalize(utils->scene->camera->pos);
+
+    coord.x = (float) pixel_x / (float) image_width;
+    coord.y = (float) pixel_y / (float) image_height;
+
+    coord.x = coord.x * 2.0f - 1.0f;
+    coord.y = coord.y  * 2.0f - 1.0f;
+
+    coord.x *= aspect_ratio;
+    /*ray_origine.x = camera->pos.x;
+    ray_origine.y = camera->pos.y;
+    ray_origine.z = camera->pos.z;*/
+    
+
+
+    ray_direction.x = coord.x - ray_origine.x;
+    ray_direction.y = coord.y - ray_origine.y;
+    ray_direction.z = -1.0f - ray_origine.z;
+
+    t_matrix4x4 rot_x = create_rotation_matrix_x(utils->scene->camera->pitch);
+    t_matrix4x4 rot_y = create_rotation_matrix_y(utils->scene->camera->yaw);
+
+    // Combine the rotation matrices
+    t_matrix4x4 combined_rot = mat4x4_multiply(rot_y, rot_x);
+
+    // Apply the combined rotation matrix to the ray direction
+    ray_direction = mat4x4_mul_vec3(combined_rot, ray_direction);
 
     return ray_direction;
 }
 
+
+
 void render_image(t_utils *utils)
 {
-    int width = WIDTH;
-    int height = HEIGHT;
     t_ray ray;
     float t[2];
     t_camera *camera = utils->scene->camera;
 
-    for (int y = 0; y < height; y++)
+    for (int y = 0; y < HEIGHT; y++)
     {
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < WIDTH; x++)
         {
             ray.origin = camera->pos;
             ray.direction = calculate_ray_direction(utils, x, y, WIDTH, HEIGHT);
@@ -45,13 +84,13 @@ void render_image(t_utils *utils)
                 float d = vec3_dot_product(normal, light_direction);
                 //d = fmax(0, d);
                 d = fmax(utils->scene->alight->intensity, d);
-                int color = create_trgb(0, 255 * d, 250 * d, 255 * d);
+                int color = create_trgb(0, utils->scene->spheres->color.r * d, utils->scene->spheres->color.g * d, utils->scene->spheres->color.b * d);
                 my_mlx_pixel_put(utils->img, x, y, color);
             }
-            else if(intersect_plane(ray, *(utils->scene->plans), t))
+            /*else if(intersect_plane(ray, *(utils->scene->plans), t))
             {
                 my_mlx_pixel_put(utils->img, x, y, create_trgb(0, utils->scene->plans->color.r, utils->scene->plans->color.g, utils->scene->plans->color.b));
-            }
+            }*/
             else
             {
                 my_mlx_pixel_put(utils->img, x, y, BLACK);

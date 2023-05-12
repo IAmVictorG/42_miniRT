@@ -44,7 +44,7 @@ void	event_handler(t_utils *utils)
 	//mlx_hook(utils->vars->win_ptr, 2, 1L<<0, close_window, utils);
 	mlx_hook(utils->vars->win_ptr, ON_MOUSEDOWN, 1L<<2, mouse_press, utils);
 	mlx_hook(utils->vars->win_ptr, ON_MOUSEUP, 1L<<3, mouse_release, utils);
-	mlx_hook(utils->vars->win_ptr, ON_MOUSEMOVE, 0L, mouse_move, utils);
+	mlx_hook(utils->vars->win_ptr, ON_MOUSEMOVE, (1L<<6), mouse_move, utils);
 	mlx_hook(utils->vars->win_ptr, ON_KEYDOWN, 1L<<0, key_events, utils);
 	mlx_loop_hook(utils->vars->mlx_ptr, main_loop, utils);
 	mlx_loop(utils->vars->mlx_ptr);

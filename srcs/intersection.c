@@ -6,6 +6,7 @@ bool intersect_sphere(t_ray ray, t_sphere sphere, float t[2])
     float   b;
     float   c;
     float   discriminant;
+
     t_vec3 oc = vec3_subtract(ray.origin, sphere.center);
 
     a = vec3_dot_product(ray.direction, ray.direction);

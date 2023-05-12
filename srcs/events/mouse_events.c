@@ -8,7 +8,7 @@ int	mouse_press(int button, int x, int y, t_utils *utils)
 	(void) utils;
 
 	printf("key = [%d]\n", button);
-    if (button == 2)
+    if (button == 3)
     {
 		utils->move->init_position.x = x;
 		utils->move->init_position.y = y;
@@ -21,7 +21,7 @@ int mouse_release(int button, int x, int y, t_utils *utils)
 {
     (void) x;
     (void) y;
-	if (button == 2)
+	if (button == 3)
 	{
 		utils->move->mouse_is_pressed = 0;
 	}
@@ -33,7 +33,7 @@ int mouse_move(int x, int y, t_utils *utils)
     (void) x;
     (void) y;
 
-    printf("Camera direction %f, %f\n", utils->scene->camera->dir.x, utils->scene->camera->dir.y);
+    printf("Camera direction %f, %f, %f\n", utils->scene->camera->dir.x, utils->scene->camera->dir.y, utils->scene->camera->dir.z);
 	if (utils->move->mouse_is_pressed)
 	{
         printf("Mouse move and is pressed\n");

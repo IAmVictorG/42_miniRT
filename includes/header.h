@@ -11,8 +11,10 @@
 # include <time.h>
 # include "minilibx-openGL/mlx.h"
 # include "libft.h"
-# define WIDTH	600
-# define HEIGHT 600
+# include "scene.h"
+
+# define WIDTH	450
+# define HEIGHT 450
 
 # define MAC_KEY_LEFT   123
 # define MAC_KEY_RIGHT  124
@@ -43,54 +45,10 @@ enum {
 	ON_DESTROY = 17
 };
 
-typedef struct s_vec2
+typedef struct  s_matrix4x4
 {
-	float x;
-	float y;
-} t_vec2;
-
-typedef struct s_vec3
-{
-	float x;
-	float y;
-	float z;
-} t_vec3;
-
-typedef struct s_color
-{
-	int r;
-	int g;
-	int b;
-} t_color;
-
-typedef struct s_ray
-{
-	t_vec3 origin;
-	t_vec3 direction;
-} t_ray;
-
-typedef struct s_camera
-{
-	t_vec3 pos;
-	t_vec3 dir;
-	float yaw;
-	float pitch;
-	float fov;
-} t_camera;
-
-typedef struct s_sphere
-{
-	t_vec3 center;
-	float radius;
-	t_color color;
-} t_sphere;
-
-typedef struct s_plan
-{
-	t_vec3 pos;
-	t_vec3 normal;
-	t_color color;
-} t_plan;
+    float m[4][4];
+}               t_matrix4x4;
 
 typedef struct		s_vars
 {
@@ -106,37 +64,6 @@ typedef struct		s_img
 	int				endian;
 	unsigned char	*addr;
 }					t_img;
-
-typedef struct s_alight
-{
-	float intensity;
-	t_color color;
-} t_alight;
-
-typedef struct s_light
-{
-	t_vec3 pos;
-	float intensity;
-	t_color color;
-} t_light;
-
-typedef struct s_scene
-{
-	t_alight *alight;
-
-	t_camera *camera;
-	int num_cameras;
-
-	t_light *lights;
-	int num_lights;
-
-	t_sphere *spheres;
-	int	num_spheres;
-
-	t_plan *plans;
-	int num_plans;
-
-} t_scene;
 
 typedef struct s_move_mouse
 {
@@ -194,5 +121,12 @@ void	change_camera_direction(t_utils *utils, int new_x, int new_y);
 int		mouse_press(int key, int x, int y, t_utils *utils);
 int		mouse_release(int button, int x, int y, t_utils *utils);
 int		mouse_move(int x, int y, t_utils *utils);
+
+
+t_matrix4x4 create_rotation_matrix_x(float angle_rad);
+t_matrix4x4 create_rotation_matrix_y(float angle_rad);
+t_vec3 mat4x4_mul_vec3(t_matrix4x4 m, t_vec3 v);
+t_matrix4x4 mat4x4_multiply(t_matrix4x4 a, t_matrix4x4 b);
+t_matrix4x4 create_rotation_matrix_axis_angle(t_vec3 axis, float angle);
 
 #endif
