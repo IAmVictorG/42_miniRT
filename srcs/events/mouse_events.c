@@ -1,4 +1,4 @@
-#include "../../includes/header.h"
+#include "../../includes/miniRT.h"
 
 int	mouse_press(int button, int x, int y, t_utils *utils)
 {
@@ -33,15 +33,13 @@ int mouse_move(int x, int y, t_utils *utils)
     (void) x;
     (void) y;
 
-    printf("Camera direction %f, %f, %f\n", utils->scene->camera->dir.x, utils->scene->camera->dir.y, utils->scene->camera->dir.z);
+
+    //printf("Camera direction %f, %f, %f\n", utils->scene->camera->dir.x, utils->scene->camera->dir.y, utils->scene->camera->dir.z);
 	if (utils->move->mouse_is_pressed)
 	{
-        printf("Mouse move and is pressed\n");
+        //printf("Mouse move and is pressed\n");
+		has_moved(utils);
 		change_camera_direction(utils, x, y);
 	}
-    else
-    {
-        printf("Mouse move\n");
-    }
 	return (0);
 }

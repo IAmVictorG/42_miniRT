@@ -1,4 +1,4 @@
-#include "../includes/header.h"
+#include "../includes/miniRT.h"
 
 t_vec3 rotate_vector_with_pitch_yaw(t_vec3 vec, float pitch, float yaw)
 {
@@ -20,11 +20,13 @@ void change_camera_position(int key, t_utils *utils)
 
     if (key == MAC_W || key == 119)
     {
+        has_moved(utils);
         printf("Camera go DOWN\n");
-        utils->scene->camera->pos = vec3_subtract(utils->scene->camera->pos, vec3_multiply_scalar(up, move_speed));      
+        utils->scene->camera->pos = vec3_add(utils->scene->camera->pos, vec3_multiply_scalar(up, move_speed));      
     }
     else if (key == MAC_A || key == 97)
     {
+        has_moved(utils);
         printf("Camera go LEFT\n");
         t_vec3 left = vec3_cross_product(up, utils->scene->camera->dir);
         left = vec3_normalize(left);
@@ -32,12 +34,14 @@ void change_camera_position(int key, t_utils *utils)
     }
     else if (key == MAC_S || key == 115)
     {
+        has_moved(utils);
 		printf("Camera go UP\n");
-        utils->scene->camera->pos = vec3_add(utils->scene->camera->pos, vec3_multiply_scalar(up, move_speed));
+        utils->scene->camera->pos = vec3_subtract(utils->scene->camera->pos, vec3_multiply_scalar(up, move_speed));
 
     }
     else if (key == MAC_D || key == 100)
     {
+        has_moved(utils);
         printf("Camera go RIGHT\n");
         t_vec3 right = vec3_cross_product(up, utils->scene->camera->dir);
         right = vec3_normalize(right);
@@ -45,18 +49,17 @@ void change_camera_position(int key, t_utils *utils)
     }
     else if (key == MAC_Q || key == 113)
     {
+        has_moved(utils);
 		printf("Camera go FORWARD\n");
         utils->scene->camera->pos = vec3_subtract(utils->scene->camera->pos, vec3_multiply_scalar(utils->scene->camera->dir, move_speed));
     }
     else if (MAC_E || key == 101)
     {
-
+        has_moved(utils);
 		printf("Camera go BACKWARD\n");
         utils->scene->camera->pos = vec3_add(utils->scene->camera->pos, vec3_multiply_scalar(utils->scene->camera->dir, move_speed));
     }
 }
-
-
 
 
 void change_camera_direction(t_utils *utils, int new_x, int new_y)
@@ -72,8 +75,8 @@ void change_camera_direction(t_utils *utils, int new_x, int new_y)
     utils->move->init_position.x = new_x;
     utils->move->init_position.y = new_y;
 
-    float pitch = delta_y * sensitivity * M_PI / 180.0f;
-    float yaw = delta_x * sensitivity * M_PI / 180.0f;
+    float pitch = delta_y * sensitivity * PI / 180.0f;
+    float yaw = delta_x * sensitivity * PI / 180.0f;
 
     utils->scene->camera->pitch += pitch;
     utils->scene->camera->yaw += yaw;

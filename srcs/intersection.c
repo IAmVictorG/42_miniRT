@@ -1,4 +1,4 @@
-#include "../includes/header.h"
+#include "../includes/miniRT.h"
 
 bool intersect_sphere(t_ray ray, t_sphere sphere, float t[2])
 {
@@ -18,7 +18,7 @@ bool intersect_sphere(t_ray ray, t_sphere sphere, float t[2])
     else 
     {
         //t[0] = (-b + sqrt(discriminant)) / (2.0f * a);
-        t[1] = (-b - sqrt(discriminant)) / (2.0f * a);
+        t[1] = (-b - sqrtf(discriminant)) / (2.0f * a);
         return true;
     }
 }

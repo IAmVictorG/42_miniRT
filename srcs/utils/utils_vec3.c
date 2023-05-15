@@ -1,4 +1,4 @@
-#include "../../includes/header.h"
+#include "../../includes/miniRT.h"
 
 t_vec3 vec3_add(t_vec3 a, t_vec3 b)
 {
@@ -62,4 +62,29 @@ t_vec3 vec3_cross_product(t_vec3 a, t_vec3 b)
 float vec3_dot_product(t_vec3 a, t_vec3 b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+float vec3_length(t_vec3 v)
+{
+    return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+}
+
+t_vec3 perturb_vector(t_vec3 v, float roughness)
+{
+
+    t_vec3 random_vector;
+    float dx = (float)rand() / RAND_MAX * 2.0f - 1.0f;
+    float dy = (float)rand() / RAND_MAX * 2.0f - 1.0f;
+    float dz = (float)rand() / RAND_MAX * 2.0f - 1.0f;
+
+    random_vector = vec3_multiply_scalar((t_vec3){dx, dy, dz}, roughness);
+    return vec3_add(v, random_vector);
+}
+
+t_vec3 reflect(t_vec3 v, t_vec3 n, float roughness)
+{
+    t_vec3 perfect_reflection;
+
+    perfect_reflection = vec3_subtract(v, vec3_multiply_scalar(n, 2.0f * vec3_dot_product(v, n)));
+    return perturb_vector(perfect_reflection, roughness);
 }

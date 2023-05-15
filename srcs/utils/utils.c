@@ -1,6 +1,4 @@
-#include "../../includes/header.h"
-
-
+#include "../../includes/miniRT.h"
 
 int is_space(char c)
 {
@@ -20,3 +18,10 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 	*(unsigned int*)dst = color;
 }
 
+void	has_moved(t_utils *utils)
+{
+	utils->move->moved = 1;
+	utils->img->frames = 1;
+	free(utils->img->accumulator);
+	utils->img->accumulator = malloc(WIDTH * HEIGHT * sizeof(t_color));
+}

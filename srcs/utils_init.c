@@ -1,4 +1,4 @@
-#include "../includes/header.h"
+#include "../includes/miniRT.h"
 
 void    init_objects_nb(FILE *file, t_scene *scene)
 {
@@ -62,7 +62,6 @@ t_img *init_img(t_vars *vars, int width, int height)
         free(img);
         return NULL;
     }
-
     return img;
 }
 
@@ -83,6 +82,10 @@ void    init_utils(t_utils *utils)
     utils->vars->mlx_ptr = mlx_init();
     utils->vars->win_ptr = mlx_new_window(utils->vars->mlx_ptr, WIDTH, HEIGHT, "miniRT");
     utils->img = init_img(utils->vars, WIDTH, HEIGHT);
+    utils->img->accumulate = 1;
+    utils->img->frames = 1;
+    utils->img->accumulator = malloc(WIDTH * HEIGHT * sizeof(t_color));
     utils->move->init_position = ((t_vec2) {0,0});
     utils->move->mouse_is_pressed = 0;
+    utils->move->moved = 0;
 }

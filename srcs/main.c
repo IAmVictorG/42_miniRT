@@ -1,4 +1,4 @@
-#include "../includes/header.h"
+#include "../includes/miniRT.h"
 
 
 
@@ -60,6 +60,5 @@ int main(int argc, char const *argv[])
     printf("SPHERE 2 %f\n", utils.scene->spheres[1].radius);
     event_handler(&utils);
     
-
     return 0;
 }

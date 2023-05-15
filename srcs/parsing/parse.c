@@ -1,4 +1,4 @@
-#include "../../includes/header.h"
+#include "../../includes/miniRT.h"
 
 static void parse_ambiant_light(t_scene *scene, char *line)
 {
@@ -33,16 +33,18 @@ static void parse_camera(t_scene *scene, char *line)
     }
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_position(r, &scene->camera->pos);
+    set_vector(r, &scene->camera->pos);
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
 
-    set_position(r, &scene->camera->dir);
+    set_vector(r, &scene->camera->dir);
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
     scene->camera->fov = atof(r);
+    scene->camera->pitch = 0.0f;
+    scene->camera->yaw = 0.0f;
     free(r);
     printf("Camera pos %f,%f,%f | direction %f,%f,%f | FOV %f\n", scene->camera->pos.x, scene->camera->pos.y, scene->camera->pos.z, scene->camera->dir.x, scene->camera->dir.y, scene->camera->dir.z, scene->camera->fov);
 }
@@ -59,7 +61,7 @@ static void parse_light(t_scene *scene, char *line)
     }
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_position(r, &scene->lights->pos);
+    set_vector(r, &scene->lights->pos);
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
@@ -89,7 +91,7 @@ static void parse_sphere(t_scene *scene, char *line)
     printf("I %d\n", i);
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_position(r, &scene->spheres[i].center);
+    set_vector(r, &scene->spheres[i].center);
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
@@ -115,12 +117,12 @@ static void parse_plane(t_scene *scene, char *line)
     }
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_position(r, &scene->plans->pos);
+    set_vector(r, &scene->plans->pos);
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
 
-    set_position(r, &scene->plans->normal);
+    set_vector(r, &scene->plans->normal);
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);

@@ -1,5 +1,5 @@
-#ifndef HEADER_H
-# define HEADER_H
+#ifndef MINIRT_H
+# define MINIRT_H
 
 
 # include <unistd.h>
@@ -37,6 +37,8 @@
 # define WHITE 0xFFFFFF
 # define BLACK 0x000000
 
+# define PI	3.14159265358979323846
+
 enum {
 	ON_KEYDOWN = 2,
 	ON_KEYUP = 3,
@@ -65,13 +67,17 @@ typedef struct		s_img
 	int				size_line;
 	int				endian;
 	unsigned char	*addr;
+	int				accumulate;
+	int				frames;
+	t_color			*accumulator;
 }					t_img;
 
 typedef struct s_move_mouse
 {
 	t_vec2	init_position;
 	int		mouse_is_pressed;
-} t_move;
+	int		moved;
+}	t_move;
 
 typedef struct s_utils
 {
@@ -79,8 +85,7 @@ typedef struct s_utils
 	t_img	*img;
 	t_scene	*scene;
 	t_move	*move;
-} t_utils;
-
+}	t_utils;
 
 void	init_utils(t_utils *utils);
 void    init_objects_nb(FILE *file, t_scene *scene);
@@ -98,23 +103,31 @@ void	render_image(t_utils *window);
 char	*get_arg(char *line);
 void	go_to_next_arg(char **line);
 void	set_rgb(char *str, t_color *color);
-void	set_position(char *str, t_vec3 *pos);
+void	set_vector(char *str, t_vec3 *vec);
 
 //Utils
 int		create_trgb(int t, int r, int g, int b);
 void	my_mlx_pixel_put(t_img *img, int x, int y, int color);
-
-//Intersect
-bool	intersect_sphere(t_ray ray, t_sphere sphere, float t[2]);
-bool	intersect_plane(t_ray ray, t_plan plane, float t[2]);
-
+t_color color_multiply_scalar(t_color color, float scalar);
+void	has_moved(t_utils *utils);
 
 t_vec3  vec3_multiply_scalar(t_vec3 a, float scalar);
 t_vec3  vec3_add(t_vec3 a, t_vec3 b);
 t_vec3  vec3_normalize(t_vec3 v);
 t_vec3	vec3_subtract(t_vec3 a, t_vec3 b);
 t_vec3	vec3_cross_product(t_vec3 a, t_vec3 b);
+t_vec3	perturb_vector(t_vec3 v, float roughness);
+t_vec3	reflect(t_vec3 v, t_vec3 n, float roughness);
 float	vec3_dot_product(t_vec3 a, t_vec3 b);
+float	vec3_length(t_vec3 v);
+
+t_color color_add(t_color color1, t_color color2);
+
+//Intersect
+bool	intersect_sphere(t_ray ray, t_sphere sphere, float t[2]);
+bool	intersect_plane(t_ray ray, t_plan plane, float t[2]);
+
+
 
 //Camera
 void    change_camera_position(int key, t_utils *utils);

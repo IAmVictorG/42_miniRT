@@ -1,4 +1,4 @@
-#include "../includes/header.h"
+#include "../includes/miniRT.h"
 
 t_matrix4x4 create_rotation_matrix_axis_angle(t_vec3 axis, float angle)
 {
@@ -31,7 +31,7 @@ t_matrix4x4 create_rotation_matrix_axis_angle(t_vec3 axis, float angle)
 }
 
 
-t_matrix4x4 create_rotation_matrix_x(float angle_rad)
+t_matrix4x4   create_rotation_matrix_x(float angle_rad)
 {
     t_matrix4x4 rot_x;
     float c = cos(angle_rad);
@@ -66,6 +66,8 @@ t_vec3 mat4x4_mul_vec3(t_matrix4x4 m, t_vec3 v)
 
     float w = m.m[3][0] * v.x + m.m[3][1] * v.y + m.m[3][2] * v.z + m.m[3][3];
 
+    if (w == 0.0f)
+        return ((t_vec3) {0,0,0});
     result.x = (m.m[0][0] * v.x + m.m[0][1] * v.y + m.m[0][2] * v.z + m.m[0][3]) / w;
     result.y = (m.m[1][0] * v.x + m.m[1][1] * v.y + m.m[1][2] * v.z + m.m[1][3]) / w;
     result.z = (m.m[2][0] * v.x + m.m[2][1] * v.y + m.m[2][2] * v.z + m.m[2][3]) / w;

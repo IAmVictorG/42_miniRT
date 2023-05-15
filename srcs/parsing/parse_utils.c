@@ -1,4 +1,4 @@
-#include "../../includes/header.h"
+#include "../../includes/miniRT.h"
 
 void go_to_next_arg(char **line)
 {
@@ -55,7 +55,7 @@ void set_rgb(char *str, t_color *color)
 	free(r);
 }
 
-void	set_position(char *str, t_vec3 *pos)
+void	set_vector(char *str, t_vec3 *vec)
 {
 	int i;
 	int	start;
@@ -66,18 +66,18 @@ void	set_position(char *str, t_vec3 *pos)
 	while (str[i] && str[i] != ',')
 		i++;
 	r = ft_substr(str, start, i);	
-	pos->x = atof(r);
+	vec->x = atof(r);
 	free(r);
 	start = ++i;
 	while (str[i] && str[i] != ',')
 		i++;
 	r = ft_substr(str, start, i - start);	
-	pos->y  = atof(r);
+	vec->y  = atof(r);
 	free(r);
 	start = ++i;
 	while (str[i] && str[i] != ',')
 		i++;
 	r = ft_substr(str, start, i - start);	
-	pos->z  = atof(r);
+	vec->z  = atof(r);
 	free(r);
 }
