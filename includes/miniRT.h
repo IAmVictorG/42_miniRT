@@ -88,12 +88,25 @@ typedef struct s_utils
 	t_move	*move;
 }	t_utils;
 
+typedef enum
+{
+    SPHERE,
+    PLANE,
+    CYLINDER
+} ObjectType;
+
 typedef struct s_payload
 {
-	t_vec3	normal;
-	t_color	color;
-	float	t;
+	ObjectType	object_type;
+	int			object_index;
+	t_vec3		hit_point;
+	t_vec3		light_direction;
+	t_vec3		normal;
+	t_color		object_color;
+	float		t;
+	float		hit_distance;
 } t_payload;
+
 
 
 void	init_utils(t_utils *utils);
@@ -134,9 +147,8 @@ float	vec3_distance(t_vec3 v1, t_vec3 v2);
 t_color color_add(t_color color1, t_color color2);
 
 //Intersect
-bool	intersect_sphere(t_ray ray, t_sphere sphere, float *t);
-bool	intersect_plane(t_ray ray, t_plan plane, float t[2]);
-
+bool intersect_object(t_utils *utils, t_ray ray, t_payload *payload);
+//bool intersect_sphere(t_ray ray, t_sphere sphere, float *t);
 
 
 //Camera

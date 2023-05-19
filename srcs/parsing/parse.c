@@ -128,7 +128,7 @@ static void parse_plane(t_scene *scene, char *line)
     r = get_arg(line);
     set_rgb(r, &scene->plans->color);
     free(r);
-    printf("Plan Pos %f,%f,%f | Dir %f,%f,%f | Color %d,%d,%d\n", scene->plans->pos.x, scene->plans->pos.y, scene->plans->pos.z, scene->plans->normal.x, scene->plans->normal.y, scene->plans->normal.z, scene->plans->color.r, scene->plans->color.g, scene->plans->color.b);
+    printf("Plan Pos %f,%f,%f | Dir %f,%f,%f | Color %d,%d,%d | Normal %f,%f,%f\n", scene->plans->pos.x, scene->plans->pos.y, scene->plans->pos.z, scene->plans->normal.x, scene->plans->normal.y, scene->plans->normal.z, scene->plans->color.r, scene->plans->color.g, scene->plans->color.b, scene->plans->normal.x, scene->plans->normal.y, scene->plans->normal.z);
 }
 
 /*static void parse_square(t_scene *scene, char *line)

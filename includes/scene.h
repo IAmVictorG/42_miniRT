@@ -63,6 +63,16 @@ typedef struct s_plan
 	t_color color;
 } t_plan;
 
+typedef struct s_cylinder
+{
+    t_vec3	bottom;
+    t_vec3	direction;
+    float	radius;
+    float	height;
+    t_color	color;
+} t_cylinder;
+
+
 typedef struct s_scene
 {
 	t_alight *alight;

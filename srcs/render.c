@@ -30,10 +30,10 @@ t_vec3 calculate_ray_direction(t_utils *utils, int pixel_x, int pixel_y, int ima
 	return ray_dir_normalized;
 }
 
-int is_in_shadow(t_utils *utils, t_sphere *sphere, t_vec3 point)
+int is_in_shadow(t_utils *utils, t_vec3 point)
 {
     t_ray shadow_ray;
-	float t;
+	t_payload payload;
 
 	for (int i = 0; i < utils->scene->num_lights; i++)
 	{
@@ -42,11 +42,9 @@ int is_in_shadow(t_utils *utils, t_sphere *sphere, t_vec3 point)
 
 		for (int i = 0; i < utils->scene->num_spheres; i++)
 		{
-			if (&utils->scene->spheres[i] == sphere)
-				continue ;
-			if (intersect_sphere(shadow_ray, utils->scene->spheres[i], &t) && t > 0.0f)
+			if (intersect_object(utils, shadow_ray, &payload) == true && payload.hit_distance > 0.0f)
 			{
-				if (vec3_distance(point, utils->scene->lights[i].pos) > vec3_distance(point, vec3_add(shadow_ray.origin, vec3_multiply_scalar(shadow_ray.direction, t))))
+				if (vec3_distance(point, utils->scene->lights[i].pos) > vec3_distance(point, vec3_add(shadow_ray.origin, vec3_multiply_scalar(shadow_ray.direction, payload.hit_distance))))
 				{
 					return 1;
 				}
@@ -58,45 +56,34 @@ int is_in_shadow(t_utils *utils, t_sphere *sphere, t_vec3 point)
 
 t_color trace_path(t_utils *utils, t_ray ray, int depth)
 {
-	float t;
-	int closest_index;
-	float hit_distance;
+	t_payload	payload;
+	t_color		color;
 
-	closest_index = -1;
-	hit_distance = FLT_MAX;
 	if (depth == 0)
 		return ((t_color){200, 190, 240});
-	for (int i = 0; i < utils->scene->num_spheres; i++)
+
+	if (intersect_object(utils, ray, &payload) == true)
 	{
-		if (intersect_sphere(ray, utils->scene->spheres[i], &t) && t > 0.0f)
-		{
-			if (t < hit_distance)
-			{
-				hit_distance = t;
-				closest_index = i;
-			}
-		}
-	}
-	if (closest_index != -1)
-	{
-		t_vec3 hit_point = vec3_add(ray.origin, vec3_multiply_scalar(ray.direction, hit_distance));
-		t_vec3 normal = vec3_normalize(vec3_add(hit_point, vec3_multiply_scalar(utils->scene->spheres[closest_index].center, -1)));
-		t_vec3 light_direction = vec3_normalize(vec3_add(utils->scene->lights->pos, vec3_multiply_scalar(hit_point, -1)));
-		t_color	color = utils->scene->spheres[closest_index].color;
-		if (is_in_shadow(utils, &(utils->scene->spheres[closest_index]), hit_point))
+		int closest_index = payload.object_index;
+		t_vec3 hit_point = payload.hit_point;
+		t_vec3 normal = payload.normal;
+		t_vec3 light_direction = payload.light_direction;
+		color = payload.object_color;
+		if (is_in_shadow(utils, hit_point))
 		{
 			color = color_multiply_scalar(utils->scene->spheres[closest_index].color, utils->scene->alight->intensity);
-			return (color);
 		}
 		else
 		{
 			float d = fmax(utils->scene->alight->intensity, vec3_dot_product(normal, light_direction));
 			color = color_multiply_scalar(utils->scene->spheres[closest_index].color, d);
-
-			return (color);
 		}
 	}
-	return ((t_color){200, 190, 240});
+	else
+	{
+		color = (t_color){200, 190, 240};
+	}
+	return (color);
 }
 
 /*t_color trace_path(t_utils *utils, t_ray ray, int depth)
