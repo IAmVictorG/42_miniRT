@@ -69,6 +69,15 @@ float vec3_length(t_vec3 v)
     return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
+float vec3_distance(t_vec3 v1, t_vec3 v2)
+{
+    float dx = v2.x - v1.x;
+    float dy = v2.y - v1.y;
+    float dz = v2.z - v1.z;
+
+    return sqrtf(dx * dx + dy * dy + dz * dz);
+}
+
 t_vec3 perturb_vector(t_vec3 v, float roughness)
 {
 

@@ -10,6 +10,7 @@
 # include <stdbool.h>
 # include <time.h>
 # include <limits.h>
+# include <float.h>
 # include "minilibx-openGL/mlx.h"
 # include "get_next_line/get_next_line.h"
 # include "libft.h"
@@ -87,6 +88,14 @@ typedef struct s_utils
 	t_move	*move;
 }	t_utils;
 
+typedef struct s_payload
+{
+	t_vec3	normal;
+	t_color	color;
+	float	t;
+} t_payload;
+
+
 void	init_utils(t_utils *utils);
 void    init_objects_nb(FILE *file, t_scene *scene);
 void	event_handler(t_utils *utils);
@@ -120,11 +129,12 @@ t_vec3	perturb_vector(t_vec3 v, float roughness);
 t_vec3	reflect(t_vec3 v, t_vec3 n, float roughness);
 float	vec3_dot_product(t_vec3 a, t_vec3 b);
 float	vec3_length(t_vec3 v);
+float	vec3_distance(t_vec3 v1, t_vec3 v2);
 
 t_color color_add(t_color color1, t_color color2);
 
 //Intersect
-bool	intersect_sphere(t_ray ray, t_sphere sphere, float t[2]);
+bool	intersect_sphere(t_ray ray, t_sphere sphere, float *t);
 bool	intersect_plane(t_ray ray, t_plan plane, float t[2]);
 
 

@@ -1,11 +1,17 @@
 #include "../includes/miniRT.h"
 
-bool intersect_sphere(t_ray ray, t_sphere sphere, float t[2])
+bool intersect_object(t_ray ray)
+{
+
+}
+
+bool intersect_sphere(t_ray ray, t_sphere sphere, float *t)
 {
     float   a;
     float   b;
     float   c;
     float   discriminant;
+   // t_vec3  hitpoint;
 
     t_vec3 oc = vec3_subtract(ray.origin, sphere.center);
 
@@ -17,8 +23,7 @@ bool intersect_sphere(t_ray ray, t_sphere sphere, float t[2])
         return false; 
     else 
     {
-        //t[0] = (-b + sqrt(discriminant)) / (2.0f * a);
-        t[1] = (-b - sqrtf(discriminant)) / (2.0f * a);
+        *t = (-b - sqrtf(discriminant)) / (2.0f * a);
         return true;
     }
 }
