@@ -76,8 +76,11 @@ typedef struct		s_img
 typedef struct s_move_mouse
 {
 	t_vec2	init_position;
-	int		mouse_is_pressed;
+	int		mouse_right_click;
+	int		mouse_left_click;
+	int		object_is_selected;
 	int		moved;
+	t_sphere *sphere;
 }	t_move;
 
 typedef struct s_utils
@@ -120,6 +123,7 @@ int		is_space(char c);
 
 //Render
 void	render_image(t_utils *window);
+t_vec3 calculate_ray_direction(t_utils *utils, int pixel_x, int pixel_y, int image_width, int image_height);
 
 //Parse
 char	*get_arg(char *line);
@@ -145,9 +149,12 @@ float	vec3_length(t_vec3 v);
 float	vec3_distance(t_vec3 v1, t_vec3 v2);
 
 t_color color_add(t_color color1, t_color color2);
+t_payload get_object(t_utils *utils, int x, int y);
+void object_move(t_utils *utils, int x, int y);
 
 //Intersect
 bool intersect_object(t_utils *utils, t_ray ray, t_payload *payload);
+bool intersect_plane(t_ray ray, t_plan plane, float *t);
 //bool intersect_sphere(t_ray ray, t_sphere sphere, float *t);
 
 

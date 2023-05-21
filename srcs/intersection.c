@@ -37,7 +37,7 @@ static bool intersect_sphere(t_ray ray, t_sphere sphere, float *t)
 //d = (1,1,1) + (0,0,-1)
 //d intersecte p en (1,1,0)
 
-static bool intersect_plane(t_ray ray, t_plan plane, float *t)
+bool intersect_plane(t_ray ray, t_plan plane, float *t)
 {
     float denom = vec3_dot_product(ray.direction, plane.normal);
     

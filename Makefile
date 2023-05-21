@@ -8,7 +8,7 @@ MAC_FLAGS = -framework OpenGL -framework AppKit
 
 SRCS =  $(addprefix srcs/, main.c utils_init.c render.c camera.c intersection.c matrix.c) \
 		$(addprefix srcs/parsing/, parse_utils.c parse.c) \
-		$(addprefix srcs/utils/, utils.c utils_vec3.c utils_color.c) \
+		$(addprefix srcs/utils/, utils.c utils_vec3.c utils_color.c utils_camera.c) \
 		$(addprefix srcs/events/, events.c mouse_events.c) \
 		$(addprefix includes/get_next_line/, get_next_line.c get_next_line_utils.c)
 
@@ -31,6 +31,7 @@ all:		$(NAME)
 
 clean:
 			$(RM) $(OBJS)
+			make clean -C includes/minilibx-linux
 
 fclean:		clean
 			$(RM) $(NAME)

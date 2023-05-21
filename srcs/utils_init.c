@@ -86,6 +86,8 @@ void    init_utils(t_utils *utils)
     utils->img->frames = 1;
     utils->img->accumulator = malloc(WIDTH * HEIGHT * sizeof(t_color));
     utils->move->init_position = ((t_vec2) {0,0});
-    utils->move->mouse_is_pressed = 0;
+    utils->move->mouse_right_click = 0;
+    utils->move->mouse_left_click = 0;
     utils->move->moved = 0;
+    utils->move->object_is_selected = 0;
 }

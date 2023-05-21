@@ -21,6 +21,14 @@ typedef struct s_color
 	int b;
 } t_color;
 
+typedef struct s_material
+{
+	t_color	color;
+	float	reflectivity; //high : mirror / low : piece of paper
+	t_color	light_emmision; 
+	float	roughness;
+} t_material;
+
 typedef struct s_ray
 {
 	t_vec3 origin;
