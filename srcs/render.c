@@ -64,19 +64,40 @@ t_color trace_path(t_utils *utils, t_ray ray, int depth)
 
 	if (intersect_object(utils, ray, &payload) == true)
 	{
-		int closest_index = payload.object_index;
 		t_vec3 hit_point = payload.hit_point;
-		t_vec3 normal = payload.normal;
+		//t_vec3 normal = payload.normal;
 		t_vec3 light_direction = payload.light_direction;
 		color = payload.object_color;
+
+		void *object;
+		t_color object_color;
+
+		if (payload.object_type == SPHERE)
+		{
+			object = &utils->scene->spheres[payload.object_index];
+			object_color = ((t_sphere *)object)->color;
+		}
+		/*else if (payload.object_type == CYLINDER)
+		{
+			object = &utils->scene->cylinders[payload.object_index];
+			object_color = ((t_cylinder *)object)->color;
+		}
+		else if (payload.object_type == PLANE)
+		{
+			object = &utils->scene->plans[payload.object_index];
+			object_color = ((t_plane *)object)->color;
+		}*/
+		t_vec3 V = vec3_normalize(vec3_subtract(utils->scene->camera->pos, hit_point));  // View direction
+		t_vec3 H = vec3_normalize(vec3_add(V, light_direction));  // Halfway vector
+		t_vec3 F0 = {0.01f, 0.01f, 0.01f};  // Fresnel reflectance at normal incidence for a dielectric material. You should change it depending on your material properties.
+
 		if (is_in_shadow(utils, hit_point))
 		{
-			color = color_multiply_scalar(utils->scene->spheres[closest_index].color, utils->scene->alight->intensity);
+			color = color_multiply_scalar(object_color, utils->scene->alight->intensity);
 		}
 		else
-		{
-			float d = fmax(utils->scene->alight->intensity, vec3_dot_product(normal, light_direction));
-			color = color_multiply_scalar(utils->scene->spheres[closest_index].color, d);
+		{	
+			color = PBR(utils, F0, V, H, payload);  // Call to PBR function.
 		}
 	}
 	else

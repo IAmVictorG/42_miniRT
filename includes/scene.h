@@ -64,12 +64,19 @@ typedef struct s_sphere
 	t_color color;
 } t_sphere;
 
-typedef struct s_plan
+typedef struct s_plane
 {
 	t_vec3 pos;
 	t_vec3 normal;
 	t_color color;
-} t_plan;
+} t_plane;
+
+
+typedef struct  s_triangle
+{
+    t_vec3   vertices[3];
+    t_color  color;
+}               t_triangle;
 
 typedef struct s_cylinder
 {
@@ -94,8 +101,15 @@ typedef struct s_scene
 	t_sphere *spheres;
 	int	num_spheres;
 
-	t_plan *plans;
+	t_plane *plans;
 	int num_plans;
+
+	t_cylinder *cylinders;
+	int	num_cylinders;
+
+	t_triangle *triangles;
+	int num_triangles;
+
 
 } t_scene;
 

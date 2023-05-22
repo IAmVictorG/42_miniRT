@@ -108,8 +108,9 @@ static void parse_sphere(t_scene *scene, char *line)
 static void parse_plane(t_scene *scene, char *line)
 {
     char *r;
+    static int i = 0;
 
-    scene->plans = (t_plan *)malloc(sizeof(t_plan));
+    scene->plans = (t_plane *)malloc(sizeof(t_plane) * scene->num_plans);
     if (scene->plans == NULL)
     {
         printf("Malloc error\n");
@@ -117,29 +118,63 @@ static void parse_plane(t_scene *scene, char *line)
     }
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_vector(r, &scene->plans->pos);
+    set_vector(r, &scene->plans[i].pos);
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
 
-    set_vector(r, &scene->plans->normal);
+    set_vector(r, &scene->plans[i].normal);
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_rgb(r, &scene->plans->color);
+    set_rgb(r, &scene->plans[i].color);
     free(r);
-    printf("Plan Pos %f,%f,%f | Dir %f,%f,%f | Color %d,%d,%d | Normal %f,%f,%f\n", scene->plans->pos.x, scene->plans->pos.y, scene->plans->pos.z, scene->plans->normal.x, scene->plans->normal.y, scene->plans->normal.z, scene->plans->color.r, scene->plans->color.g, scene->plans->color.b, scene->plans->normal.x, scene->plans->normal.y, scene->plans->normal.z);
+    printf("Plan Pos %f,%f,%f | Dir %f,%f,%f | Color %d,%d,%d | Normal %f,%f,%f\n", scene->plans[i].pos.x, scene->plans[i].pos.y, scene->plans[i].pos.z, scene->plans[i].normal.x, scene->plans[i].normal.y, scene->plans[i].normal.z, scene->plans[i].color.r, scene->plans[i].color.g, scene->plans[i].color.b, scene->plans[i].normal.x, scene->plans[i].normal.y, scene->plans[i].normal.z);
+    i++;
 }
+
+static void parse_cylinder(t_scene *scene, char *line)
+{
+    char *r;
+    static int i = 0;    
+
+
+    scene->cylinders = (t_cylinder *)malloc(sizeof(t_cylinder) * scene->num_cylinders);
+    if (scene->cylinders == NULL)
+    {
+        printf("Malloc error\n");
+        return ;
+    }
+    go_to_next_arg(&line);
+    r = get_arg(line);
+    set_vector(r, &scene->cylinders[i].bottom);
+    go_to_next_arg(&line);
+    free(r);
+    r = get_arg(line);
+    set_vector(r, &scene->cylinders[i].direction);
+    free(r);
+    go_to_next_arg(&line);
+    r = get_arg(line);
+    scene->cylinders[i].radius = atof(r);
+    free(r);
+    go_to_next_arg(&line);
+    r = get_arg(line);
+    scene->cylinders[i].height = atof(r);
+    free(r);
+    go_to_next_arg(&line);
+    r = get_arg(line);
+    set_rgb(r, &scene->cylinders[i].color);
+    free(r);
+    printf("Cylinder center base %f,%f,%f | radius %f | height %f | color %d,%d,%d\n", scene->cylinders[i].bottom.x, scene->cylinders[i].bottom.y,  scene->cylinders[i].bottom.z, scene->cylinders[i].radius, scene->cylinders->height, scene->cylinders[i].color.r, scene->cylinders[i].color.g, scene->cylinders[i].color.b);
+    i++;
+}
+
 
 /*static void parse_square(t_scene *scene, char *line)
 {
     // Parse square properties and add to scene
 }
 
-static void parse_cylinder(t_scene *scene, char *line)
-{
-    // Parse cylinder properties and add to scene
-}
 
 static void parse_triangle(t_scene *scene, char *line)
 {
@@ -168,13 +203,13 @@ void parse_line(t_scene *scene, char *line)
     {
         parse_plane(scene, line);
     }
-    /*else if (line[0] == 's' && line[1] == 'q' && is_space(line[2])) // Square
-    {
-        parse_square(scene, line);
-    }
     else if (line[0] == 'c' && line[1] == 'y' && is_space(line[2])) // Cylinder
     {
         parse_cylinder(scene, line);
+    }
+    /*else if (line[0] == 's' && line[1] == 'q' && is_space(line[2])) // Square
+    {
+        parse_square(scene, line);
     }
     else if (line[0] == 't' && line[1] == 'r' && is_space(line[2])) // Triangle
     {

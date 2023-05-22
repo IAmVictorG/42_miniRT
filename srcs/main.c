@@ -56,8 +56,8 @@ int main(int argc, char const *argv[])
     //display_image(&utils);
 
 
-    printf("SPHERE 1 %f\n", utils.scene->spheres[0].radius);
-    printf("SPHERE 2 %f\n", utils.scene->spheres[1].radius);
+    //printf("SPHERE 1 %f\n", utils.scene->spheres[0].radius);
+    //printf("SPHERE 2 %f\n", utils.scene->spheres[1].radius);
     event_handler(&utils);
     
     return 0;

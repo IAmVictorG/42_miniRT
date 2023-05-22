@@ -32,6 +32,7 @@ int mouse_release(int button, int x, int y, t_utils *utils)
 	{
 		utils->move->mouse_left_click = 0;
 		utils->move->object_is_selected = 0;
+		utils->move->sphere = NULL;
 	}
 	if (button == 3)
 	{

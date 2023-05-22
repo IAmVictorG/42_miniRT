@@ -10,6 +10,8 @@ void    init_objects_nb(FILE *file, t_scene *scene)
     scene->num_cameras = 1;
     scene->num_lights = 0;
     scene->num_plans = 0;
+    scene->num_cylinders = 0;
+    scene->num_triangles = 0;
     while ((read = getline(&line, &len, file)) != -1)
     {
         if (line[0] == 'L' && is_space(line[1])) // Light
@@ -24,13 +26,13 @@ void    init_objects_nb(FILE *file, t_scene *scene)
         {
             scene->num_plans++;
         }
+        else if (line[0] == 'c' && line[1] == 'y' && is_space(line[2])) // Cylinder
+        {
+            scene->num_cylinders++;
+        }
         /*else if (line[0] == 's' && line[1] == 'q' && is_space(line[2])) // Square
         {
             parse_square(scene, line);
-        }
-        else if (line[0] == 'c' && line[1] == 'y' && is_space(line[2])) // Cylinder
-        {
-            parse_cylinder(scene, line);
         }
         else if (line[0] == 't' && line[1] == 'r' && is_space(line[2])) // Triangle
         {

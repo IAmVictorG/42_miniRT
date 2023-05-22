@@ -95,7 +95,8 @@ typedef enum
 {
     SPHERE,
     PLANE,
-    CYLINDER
+    CYLINDER,
+	TRIANGLE
 } ObjectType;
 
 typedef struct s_payload
@@ -147,6 +148,7 @@ t_vec3	reflect(t_vec3 v, t_vec3 n, float roughness);
 float	vec3_dot_product(t_vec3 a, t_vec3 b);
 float	vec3_length(t_vec3 v);
 float	vec3_distance(t_vec3 v1, t_vec3 v2);
+t_vec3 vec3_multiply(t_vec3 a, t_vec3 b);
 
 t_color color_add(t_color color1, t_color color2);
 t_payload get_object(t_utils *utils, int x, int y);
@@ -154,7 +156,7 @@ void object_move(t_utils *utils, int x, int y);
 
 //Intersect
 bool intersect_object(t_utils *utils, t_ray ray, t_payload *payload);
-bool intersect_plane(t_ray ray, t_plan plane, float *t);
+bool intersect_plane(t_ray ray, t_plane plane, float *t);
 //bool intersect_sphere(t_ray ray, t_sphere sphere, float *t);
 
 
@@ -173,5 +175,10 @@ t_matrix4x4 create_rotation_matrix_y(float angle_rad);
 t_vec3 mat4x4_mul_vec3(t_matrix4x4 m, t_vec3 v);
 t_matrix4x4 mat4x4_multiply(t_matrix4x4 a, t_matrix4x4 b);
 t_matrix4x4 create_rotation_matrix_axis_angle(t_vec3 axis, float angle);
+
+
+
+t_color PBR(t_utils *utils, t_vec3 F0, t_vec3 V, t_vec3 H, t_payload payload);
+
 
 #endif

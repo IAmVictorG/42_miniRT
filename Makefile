@@ -6,7 +6,7 @@ LINUX_FLAGS = -lm -lX11 -lXext -lpthread
 
 MAC_FLAGS = -framework OpenGL -framework AppKit
 
-SRCS =  $(addprefix srcs/, main.c utils_init.c render.c camera.c intersection.c matrix.c) \
+SRCS =  $(addprefix srcs/, main.c utils_init.c render.c camera.c intersection.c matrix.c pbr.c) \
 		$(addprefix srcs/parsing/, parse_utils.c parse.c) \
 		$(addprefix srcs/utils/, utils.c utils_vec3.c utils_color.c utils_camera.c) \
 		$(addprefix srcs/events/, events.c mouse_events.c) \

@@ -18,6 +18,12 @@ t_vec3 vec3_subtract(t_vec3 a, t_vec3 b)
     return result;
 }
 
+t_vec3 vec3_multiply(t_vec3 a, t_vec3 b)
+{
+    return (t_vec3) {a.x * b.x, a.y * b.y, a.z * b.z};
+}
+
+
 t_vec3 vec3_multiply_scalar(t_vec3 a, float scalar)
 {
     t_vec3 result;

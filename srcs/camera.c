@@ -59,6 +59,10 @@ void change_camera_position(int key, t_utils *utils)
 		printf("Camera go BACKWARD\n");
         utils->scene->camera->pos = vec3_add(utils->scene->camera->pos, vec3_multiply_scalar(utils->scene->camera->dir, move_speed));
     }
+    else
+    {
+        printf("Do nth");
+    }
 }
 
 
