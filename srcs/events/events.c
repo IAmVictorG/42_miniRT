@@ -15,14 +15,17 @@ int	key_events(int key, t_utils *utils)
 
 static int main_loop(t_utils *utils)
 {
-	clock_t start;
+	clock_t	start;
+	long	rending_time;
 	char	*render_time;
 
 	start = clock();
 
 	render_image(utils);
-	render_time = ft_itoa(roundf(clock() - start) / 1000);
+	rending_time = roundf(clock() - start) / 1000;
+	render_time = ft_itoa(rending_time);
 	mlx_put_image_to_window(utils->vars->mlx_ptr, utils->vars->win_ptr, utils->img->img_ptr, 0, 0);
+	utils->img->rending_time_in_ms = rending_time;
 	mlx_string_put(utils->vars->mlx_ptr, utils->vars->win_ptr, 1, 10, 0xFF00FF, "Render time ");
 	mlx_string_put(utils->vars->mlx_ptr, utils->vars->win_ptr, 90, 10, 0xFF00FF, render_time);
 	free(render_time);

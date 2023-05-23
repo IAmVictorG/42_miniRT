@@ -16,6 +16,8 @@ void change_camera_position(int key, t_utils *utils)
 {
     int move_speed = 2;
 
+    move_speed *=  utils->img->rending_time_in_ms / 50;
+
     t_vec3 up = vec3_cross_product(utils->scene->camera->dir, vec3_cross_product((t_vec3){0, 1, 0}, utils->scene->camera->dir));
 
     if (key == MAC_W || key == 119)

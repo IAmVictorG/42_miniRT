@@ -23,15 +23,15 @@ RM		= rm -f
 
 $(NAME): $(OBJS)
 	make -C includes/libft
-	make -C includes/minilibx-linux
-	$(CC) $(CFLAGS) $(OBJS) $(LIBS) includes/minilibx-linux/libmlx.a -fsanitize=address $(LINUX_FLAGS) -o $(NAME)
+	make -C includes/minilibx-openGL
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) includes/minilibx-openGL/libmlx.a -fsanitize=address $(MAC_FLAGS) -o $(NAME)
 
 
 all:		$(NAME)
 
 clean:
 			$(RM) $(OBJS)
-			make clean -C includes/minilibx-linux
+			make clean -C includes/minilibx-openGL
 
 fclean:		clean
 			$(RM) $(NAME)

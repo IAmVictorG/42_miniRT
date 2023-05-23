@@ -71,6 +71,7 @@ typedef struct		s_img
 	int				accumulate;
 	int				frames;
 	t_color			*accumulator;
+	long			rending_time_in_ms;
 }					t_img;
 
 typedef struct s_move_mouse

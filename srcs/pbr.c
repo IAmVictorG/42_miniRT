@@ -35,7 +35,7 @@ static float G(float alpha, t_vec3 N, t_vec3 V, t_vec3 L)
 {
 	/*float m = fmin(G1(alpha, N, V), G1(alpha, N, L));
 	return (fmin(1.0f, m));*/
-	return (min(1, G1(alpha, N, V) * G1(alpha, N, L)));
+	return (fmin(1, G1(alpha, N, V) * G1(alpha, N, L)));
 }
 
 static float D(float alpha, t_vec3 N, t_vec3 H)
@@ -43,7 +43,7 @@ static float D(float alpha, t_vec3 N, t_vec3 H)
 	float numerator = powf(alpha, 2.0f);
 
 	float Ndoth = fmax(vec3_dot_product(N, H), 0.0f);
-	float denominator = PI * powf(powf(Ndoth, 2.0f) * (powf(alpha, 2.0f) - 1.0f) + 1.0f, 2.0f);
+	float denominator = (float) PI * powf(powf(Ndoth, 2.0f) * (powf(alpha, 2.0f) - 1.0f) + 1.0f, 2.0f);
 	denominator = fmax(denominator, 0.0000001f);
 
 	return numerator / denominator;
@@ -73,7 +73,7 @@ t_color PBR(t_utils *utils, t_vec3 F0, t_vec3 V, t_vec3 H, t_payload payload)
 	t_vec3 Kd = vec3_subtract((t_vec3) {1.0f, 1.0f, 1.0f}, Ks);
 
 	t_vec3 color = (t_vec3) {(float) payload.object_color.r, (float) payload.object_color.g, (float) payload.object_color.b};
-	t_vec3 lambert = vec3_multiply_scalar(color, 1.0f / PI);
+	t_vec3 lambert = vec3_multiply_scalar(color, 1.0f / (float) PI);
 	
 	t_vec3 cookTorranceNumerator = vec3_multiply_scalar(F(F0, V, H), D(alpha, N, H) * G(alpha, N, V, L));
 	float cookTorranceDenominator = 4.0f * fmax(VdN, 0.0f) * fmax(LdN, 0.0f);
