@@ -61,6 +61,7 @@ typedef struct s_sphere
 {
 	t_vec3 center;
 	float radius;
+	t_material material;
 	t_color color;
 } t_sphere;
 
@@ -75,7 +76,7 @@ typedef struct s_plane
 typedef struct  s_triangle
 {
     t_vec3   vertices[3];
-    t_color  color;
+    t_material material;
 }               t_triangle;
 
 typedef struct s_cylinder

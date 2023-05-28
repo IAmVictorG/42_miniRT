@@ -99,8 +99,8 @@ static void parse_sphere(t_scene *scene, char *line)
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_rgb(r, &scene->spheres[i].color);
-    printf("Sphere position %f,%f,%f | radius %f | Color %d,%d,%d\n", scene->spheres[i].center.x, scene->spheres[i].center.y, scene->spheres[i].center.z, scene->spheres[i].radius, scene->spheres[i].color.r, scene->spheres[i].color.g, scene->spheres[i].color.b);
+    set_rgb(r, &scene->spheres[i].material.color);
+    printf("Sphere position %f,%f,%f | radius %f | Color %d,%d,%d\n", scene->spheres[i].center.x, scene->spheres[i].center.y, scene->spheres[i].center.z, scene->spheres[i].radius, scene->spheres[i].material.color.r, scene->spheres[i].material.color.g, scene->spheres[i].material.color.b);
     free(r);
     i++;
 }

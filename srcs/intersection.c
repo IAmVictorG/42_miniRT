@@ -144,7 +144,7 @@ bool intersect_object(t_utils *utils, t_ray ray, t_payload *payload)
                 closest_object_payload.t = payload->t;
                 closest_object_payload.object_type = SPHERE;
                 closest_object_payload.object_index = i;
-                closest_object_payload.object_color = utils->scene->spheres[i].color;
+                closest_object_payload.object_color = utils->scene->spheres[i].material.color;
             }
         }
         i++;
@@ -185,7 +185,7 @@ bool intersect_object(t_utils *utils, t_ray ray, t_payload *payload)
             closest_object_payload.t = payload->t;
             closest_object_payload.object_type = TRIANGLE;
             closest_object_payload.object_index = i;
-            closest_object_payload.object_color = utils->scene->triangles[i].color;
+            closest_object_payload.object_color = utils->scene->triangles[i].material.color;
         }
         i++;
     }

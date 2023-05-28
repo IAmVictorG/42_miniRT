@@ -54,7 +54,99 @@ int is_in_shadow(t_utils *utils, t_vec3 point)
     return 0;
 }
 
-t_color trace_path(t_utils *utils, t_ray ray, int depth)
+t_vec3 Lambertian(t_payload payload, t_vec3 light_direction, t_vec3 light_color) {
+    t_vec3 N = payload.normal;
+    t_vec3 object_color = {
+		(float) payload.object_color.r / 255.0f,
+		(float) payload.object_color.g / 255.0f,
+		(float) payload.object_color.b / 255.0f
+    };
+    
+    // Calculate the dot product of the normal and the light direction
+    float NdL = vec3_dot_product(N, light_direction);
+    
+    // Clamp the dot product to the range [0, 1]
+    NdL = fmax(0.0, fmin(1.0, NdL));
+    // Calculate the final color
+    t_vec3 final_color = {
+        object_color.x * light_color.x * NdL,
+        object_color.y * light_color.y * NdL,
+        object_color.z * light_color.z * NdL
+    };
+
+    return final_color;
+}
+
+t_vec3 trace_path(t_utils *utils, t_ray ray, t_vec3 light_color, int depth)
+{
+	t_payload	payload;
+	t_vec3		color;
+
+	if (depth == 0)
+		return ((t_vec3){0.8, 0.6, 0.9});
+
+	if (intersect_object(utils, ray, &payload) == true)
+	{
+		t_vec3 hit_point = payload.hit_point;
+		t_vec3 light_direction = payload.light_direction;
+		color = (t_vec3) {
+            (float) payload.object_color.r / 255.0f,
+            (float) payload.object_color.g / 255.0f,
+            (float) payload.object_color.b / 255.0f
+        };
+
+		void *object;
+		t_color object_color;
+		(void) object_color;
+		t_vec3 V = vec3_normalize(vec3_subtract(utils->scene->camera->pos, hit_point));  // View direction
+		t_vec3 H = vec3_normalize(vec3_add(V, light_direction));  // Halfway vector
+		t_vec3 F0 = {0.03f, 0.03f, 0.03f};  // Fresnel reflectance at normal incidence for a dielectric material. You should change it depending on your material properties.
+
+
+		if (payload.object_type == SPHERE)
+		{
+			object = &utils->scene->spheres[payload.object_index];
+			object_color = ((t_sphere *)object)->color;
+		}
+
+		if (is_in_shadow(utils, hit_point))
+		{
+			//color = (t_vec3) {0.0f, 0.0f, 0.0f};
+			//color = color_multiply_scalar(object_color, utils->scene->alight->intensity);
+			color = (t_vec3) {object_color.r * utils->scene->alight->intensity / 255.0f, object_color.g * utils->scene->alight->intensity / 255.0f, object_color.b * utils->scene->alight->intensity / 255.0f};
+
+		}
+		else
+		{	
+			color = PBR(utils, F0, V, H, payload);  // Call to PBR function.
+			//color = Lambertian(payload, light_direction, light_color);
+		}
+
+		if (depth > 1)
+		{
+			t_ray reflected_ray;
+			reflected_ray.origin = hit_point;
+			reflected_ray.direction = reflect(ray.direction, payload.normal, 0.1f);
+			t_vec3 reflected_light_color = vec3_multiply(color, light_color);
+			t_vec3 reflected_color = trace_path(utils, reflected_ray, reflected_light_color, depth - 1);
+
+			color = vec3_add(color, vec3_multiply_scalar(reflected_color, 0.5f)); // assuming reflectivity is 0.5
+		}
+
+	}
+	else
+	{
+		color = (t_vec3){200.0f / 255.0f, 190.0f / 255.0f, 240.0f / 255.0f};
+	}
+	
+	return (t_vec3){color.x, color.y, color.z};
+}
+
+
+
+
+
+/*t_color trace_path(t_utils *utils, t_ray ray, int depth)
 {
 	t_payload	payload;
 	t_color		color;
@@ -77,7 +169,7 @@ t_color trace_path(t_utils *utils, t_ray ray, int depth)
 			object = &utils->scene->spheres[payload.object_index];
 			object_color = ((t_sphere *)object)->color;
 		}
-		/*else if (payload.object_type == CYLINDER)
+		else if (payload.object_type == CYLINDER)
 		{
 			object = &utils->scene->cylinders[payload.object_index];
 			object_color = ((t_cylinder *)object)->color;
@@ -86,10 +178,10 @@ t_color trace_path(t_utils *utils, t_ray ray, int depth)
 		{
 			object = &utils->scene->plans[payload.object_index];
 			object_color = ((t_plane *)object)->color;
-		}*/
-		t_vec3 V = vec3_normalize(vec3_subtract(utils->scene->camera->pos, hit_point));  // View direction
-		t_vec3 H = vec3_normalize(vec3_add(V, light_direction));  // Halfway vector
-		t_vec3 F0 = {0.01f, 0.01f, 0.01f};  // Fresnel reflectance at normal incidence for a dielectric material. You should change it depending on your material properties.
+		}
+		//t_vec3 V = vec3_normalize(vec3_subtract(utils->scene->camera->pos, hit_point));  // View direction
+		//t_vec3 H = vec3_normalize(vec3_add(V, light_direction));  // Halfway vector
+		//t_vec3 F0 = {0.01f, 0.01f, 0.01f};  // Fresnel reflectance at normal incidence for a dielectric material. You should change it depending on your material properties.
 
 		if (is_in_shadow(utils, hit_point))
 		{
@@ -97,15 +189,15 @@ t_color trace_path(t_utils *utils, t_ray ray, int depth)
 		}
 		else
 		{	
-			color = PBR(utils, F0, V, H, payload);  // Call to PBR function.
+			color = Lambertian(payload, light_direction, (t_color) {10, 20, 30});
+			//color = PBR(utils, F0, V, H, payload);  // Call to PBR function.
 		}
 	}
 	else
 	{
 		color = (t_color){200, 190, 240};
 	}
-	return (color);
-}
+	return (color)};*/
 
 /*t_color trace_path(t_utils *utils, t_ray ray, int depth)
 {
@@ -154,39 +246,45 @@ t_color trace_path(t_utils *utils, t_ray ray, int depth)
 
 void render_image(t_utils *utils)
 {
-	t_ray ray;
-	t_camera *camera = utils->scene->camera;
-	int depth;
-	t_color old_color;
-	t_color new_color;
+    t_ray ray;
+    t_camera *camera = utils->scene->camera;
+    int depth;
+    t_color old_color;
+    t_color new_color;
+	t_vec3 light_color;
 
-	depth = 5;
+	light_color = (t_vec3) {(float) utils->scene->lights->color.r / 255.0f, (float) utils->scene->lights->color.g / 255.0f, (float) utils->scene->lights->color.b / 255.0f};
 
-	for (int y = 0; y < HEIGHT; y++)
-	{
-		for (int x = 0; x < WIDTH; x++)
-		{
-			ray.origin = camera->pos;
-			ray.direction = calculate_ray_direction(utils, x, y, WIDTH, HEIGHT);
-			t_color color = trace_path(utils, ray, depth);
-			if (utils->img->accumulate == 1)
-			{
-				if (utils->img->frames == 1)
-				{
-					utils->img->accumulator[y * WIDTH + x] = color;
-					my_mlx_pixel_put(utils->img, x, y, create_trgb(0, color.r, color.g, color.b));
-				}
-				else
-				{
-					old_color = utils->img->accumulator[y * WIDTH + x];
-					new_color = color_multiply_scalar(old_color, utils->img->frames - 1);
-					new_color = color_add(new_color, color);
-					new_color = color_multiply_scalar(new_color, 1.0f / (float)utils->img->frames);
-					utils->img->accumulator[y * WIDTH + x] = new_color;
-					my_mlx_pixel_put(utils->img, x, y, create_trgb(0, new_color.r, new_color.g, new_color.b));
-				}
-			}
-		}
-	}
-	utils->img->frames++;
+    depth = 5;
+
+    for (int y = 0; y < HEIGHT; y++)
+    {
+        for (int x = 0; x < WIDTH; x++)
+        {
+            ray.origin = camera->pos;
+            ray.direction = calculate_ray_direction(utils, x, y, WIDTH, HEIGHT);
+            t_vec3 color = trace_path(utils, ray, light_color, depth);
+			color = reinhard_tone_mapping(color);
+            t_color color_converted = (t_color){color.x * 255.0f, color.y * 255.0f, color.z * 255.0f};
+
+            if (utils->img->accumulate == 1)
+            {
+                if (utils->img->frames == 1)
+                {
+                    utils->img->accumulator[y * WIDTH + x] = color_converted;
+                    my_mlx_pixel_put(utils->img, x, y, create_trgb(0, color_converted.r, color_converted.g, color_converted.b));
+                }
+                else
+                {
+                    old_color = utils->img->accumulator[y * WIDTH + x];
+                    new_color = color_multiply_scalar(old_color, utils->img->frames - 1);
+                    new_color = color_add(new_color, color_converted);
+                    new_color = color_multiply_scalar(new_color, 1.0f / (float)utils->img->frames);
+                    utils->img->accumulator[y * WIDTH + x] = new_color;
+                    my_mlx_pixel_put(utils->img, x, y, create_trgb(0, new_color.r, new_color.g, new_color.b));
+                }
+            }
+        }
+    }
+    utils->img->frames++;
 }
