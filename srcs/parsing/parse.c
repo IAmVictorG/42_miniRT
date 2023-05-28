@@ -16,9 +16,9 @@ static void parse_ambiant_light(t_scene *scene, char *line)
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_rgb(r, &scene->alight->color);
+    set_rgb_vector(r, &scene->alight->color);
     free(r);
-    printf("Ambiant light Intensity = %f, r,g,b = %d,%d,%d\n", scene->alight->intensity, scene->alight->color.r, scene->alight->color.g, scene->alight->color.b);
+    printf("Ambiant light Intensity = %f, r,g,b = %f,%f,%f\n", scene->alight->intensity, scene->alight->color.x, scene->alight->color.y, scene->alight->color.z);
 }
 
 static void parse_camera(t_scene *scene, char *line)
@@ -69,9 +69,9 @@ static void parse_light(t_scene *scene, char *line)
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_rgb(r, &scene->lights->color);
+    set_rgb_vector(r, &scene->lights->color);
     free(r);
-    printf("Light Intesity = %f, r,g,b = %d,%d,%d pos x,y,z = %f,%f,%f\n", scene->lights->intensity, scene->lights->color.r, scene->lights->color.g, scene->lights->color.b, scene->lights->pos.x, scene->lights->pos.y, scene->lights->pos.z);
+    printf("Light Intesity = %f, r,g,b = %f,%f,%f pos x,y,z = %f,%f,%f\n", scene->lights->intensity, scene->lights->color.x, scene->lights->color.y, scene->lights->color.z, scene->lights->pos.x, scene->lights->pos.y, scene->lights->pos.z);
 }
 
 static void parse_sphere(t_scene *scene, char *line)
@@ -99,8 +99,8 @@ static void parse_sphere(t_scene *scene, char *line)
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_rgb(r, &scene->spheres[i].material.color);
-    printf("Sphere position %f,%f,%f | radius %f | Color %d,%d,%d\n", scene->spheres[i].center.x, scene->spheres[i].center.y, scene->spheres[i].center.z, scene->spheres[i].radius, scene->spheres[i].material.color.r, scene->spheres[i].material.color.g, scene->spheres[i].material.color.b);
+    set_rgb_vector(r, &scene->spheres[i].material.color);
+    printf("Sphere position %f,%f,%f | radius %f | Color %f,%f,%f\n", scene->spheres[i].center.x, scene->spheres[i].center.y, scene->spheres[i].center.z, scene->spheres[i].radius, scene->spheres[i].material.color.x, scene->spheres[i].material.color.y, scene->spheres[i].material.color.z);
     free(r);
     i++;
 }
@@ -127,9 +127,9 @@ static void parse_plane(t_scene *scene, char *line)
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_rgb(r, &scene->plans[i].color);
+    set_rgb_vector(r, &scene->plans[i].color);
     free(r);
-    printf("Plan Pos %f,%f,%f | Dir %f,%f,%f | Color %d,%d,%d | Normal %f,%f,%f\n", scene->plans[i].pos.x, scene->plans[i].pos.y, scene->plans[i].pos.z, scene->plans[i].normal.x, scene->plans[i].normal.y, scene->plans[i].normal.z, scene->plans[i].color.r, scene->plans[i].color.g, scene->plans[i].color.b, scene->plans[i].normal.x, scene->plans[i].normal.y, scene->plans[i].normal.z);
+    printf("Plan Pos %f,%f,%f | Dir %f,%f,%f | Color %f,%f,%f | Normal %f,%f,%f\n", scene->plans[i].pos.x, scene->plans[i].pos.y, scene->plans[i].pos.z, scene->plans[i].normal.x, scene->plans[i].normal.y, scene->plans[i].normal.z, scene->plans[i].color.x, scene->plans[i].color.y, scene->plans[i].color.z, scene->plans[i].normal.x, scene->plans[i].normal.y, scene->plans[i].normal.z);
     i++;
 }
 
@@ -163,9 +163,9 @@ static void parse_cylinder(t_scene *scene, char *line)
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_rgb(r, &scene->cylinders[i].color);
+    set_rgb_vector(r, &scene->cylinders[i].color);
     free(r);
-    printf("Cylinder center base %f,%f,%f | radius %f | height %f | color %d,%d,%d\n", scene->cylinders[i].bottom.x, scene->cylinders[i].bottom.y,  scene->cylinders[i].bottom.z, scene->cylinders[i].radius, scene->cylinders->height, scene->cylinders[i].color.r, scene->cylinders[i].color.g, scene->cylinders[i].color.b);
+    printf("Cylinder center base %f,%f,%f | radius %f | height %f | color %f,%f,%f\n", scene->cylinders[i].bottom.x, scene->cylinders[i].bottom.y,  scene->cylinders[i].bottom.z, scene->cylinders[i].radius, scene->cylinders->height, scene->cylinders[i].color.x, scene->cylinders[i].color.y, scene->cylinders[i].color.z);
     i++;
 }
 

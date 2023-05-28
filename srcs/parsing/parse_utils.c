@@ -28,7 +28,7 @@ char *get_arg(char *line)
 	return (ft_substr(line, 0, i));
 }
 
-void set_rgb(char *str, t_color *color)
+void set_rgb_vector(char *str, t_vec3 *color)
 {
 	int i;
 	int	start;
@@ -39,19 +39,19 @@ void set_rgb(char *str, t_color *color)
 	while (str[i] && str[i] != ',')
 		i++;
 	r = ft_substr(str, start, i);	
-	color->r = atoi(r);
+	color->x = (float) atoi(r) / 255.0f;
 	free(r);
 	start = ++i;
 	while (str[i] && str[i] != ',')
 		i++;
 	r = ft_substr(str, start, i - start);	
-	color->g = atoi(r);
+	color->y = (float) atoi(r) / 255.0f;
 	free(r);
 	start = ++i;
 	while (str[i] && str[i] != ',')
 		i++;
 	r = ft_substr(str, start, i - start);	
-	color->b = atoi(r);
+	color->z = (float) atoi(r) / 255.0f;
 	free(r);
 }
 

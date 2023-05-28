@@ -107,7 +107,7 @@ typedef struct s_payload
 	t_vec3		hit_point;
 	t_vec3		light_direction;
 	t_vec3		normal;
-	t_color		object_color;
+	t_vec3		object_color;
 	float		t;
 	float		hit_distance;
 } t_payload;
@@ -130,7 +130,7 @@ t_vec3 calculate_ray_direction(t_utils *utils, int pixel_x, int pixel_y, int ima
 //Parse
 char	*get_arg(char *line);
 void	go_to_next_arg(char **line);
-void	set_rgb(char *str, t_color *color);
+void	set_rgb_vector(char *str, t_vec3 *color);
 void	set_vector(char *str, t_vec3 *vec);
 
 //Utils

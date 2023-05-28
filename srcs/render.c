@@ -57,9 +57,9 @@ int is_in_shadow(t_utils *utils, t_vec3 point)
 t_vec3 Lambertian(t_payload payload, t_vec3 light_direction, t_vec3 light_color) {
     t_vec3 N = payload.normal;
     t_vec3 object_color = {
-		(float) payload.object_color.r / 255.0f,
-		(float) payload.object_color.g / 255.0f,
-		(float) payload.object_color.b / 255.0f
+		(float) payload.object_color.x / 255.0f,
+		(float) payload.object_color.y / 255.0f,
+		(float) payload.object_color.z / 255.0f
     };
     
     // Calculate the dot product of the normal and the light direction
@@ -90,13 +90,13 @@ t_vec3 trace_path(t_utils *utils, t_ray ray, t_vec3 light_color, int depth)
 		t_vec3 hit_point = payload.hit_point;
 		t_vec3 light_direction = payload.light_direction;
 		color = (t_vec3) {
-            (float) payload.object_color.r / 255.0f,
-            (float) payload.object_color.g / 255.0f,
-            (float) payload.object_color.b / 255.0f
+            (float) payload.object_color.x / 255.0f,
+            (float) payload.object_color.y / 255.0f,
+            (float) payload.object_color.z / 255.0f
         };
 
 		void *object;
-		t_color object_color;
+		t_vec3 object_color;
 		(void) object_color;
 		t_vec3 V = vec3_normalize(vec3_subtract(utils->scene->camera->pos, hit_point));  // View direction
 		t_vec3 H = vec3_normalize(vec3_add(V, light_direction));  // Halfway vector
@@ -113,7 +113,7 @@ t_vec3 trace_path(t_utils *utils, t_ray ray, t_vec3 light_color, int depth)
 		{
 			//color = (t_vec3) {0.0f, 0.0f, 0.0f};
 			//color = color_multiply_scalar(object_color, utils->scene->alight->intensity);
-			color = (t_vec3) {object_color.r * utils->scene->alight->intensity / 255.0f, object_color.g * utils->scene->alight->intensity / 255.0f, object_color.b * utils->scene->alight->intensity / 255.0f};
+			color = vec3_multiply_scalar(color, utils->scene->alight->intensity);
 
 		}
 		else
@@ -253,7 +253,7 @@ void render_image(t_utils *utils)
     t_color new_color;
 	t_vec3 light_color;
 
-	light_color = (t_vec3) {(float) utils->scene->lights->color.r / 255.0f, (float) utils->scene->lights->color.g / 255.0f, (float) utils->scene->lights->color.b / 255.0f};
+	light_color = utils->scene->lights->color;
 
     depth = 5;
 

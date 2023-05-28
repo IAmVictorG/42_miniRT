@@ -65,10 +65,10 @@ static t_vec3 F(t_vec3 F0, t_vec3 V, t_vec3 H) // F Schlick
 	return (vec3_add(F0 ,vec3_multiply_scalar(vec3_subtract((t_vec3){1.0f, 1.0f, 1.0f}, F0), powf(1.0f - fmax(vec3_dot_product(H, V), 0.0f), 5.0f))));
 }
 
-/*t_vec3 PBR(t_utils *utils, t_vec3 F0, t_vec3 V, t_vec3 H, t_payload payload)
+t_vec3 PBR(t_utils *utils, t_vec3 F0, t_vec3 V, t_vec3 H, t_payload payload)
 {
-	t_vec3 light_color = (t_vec3) {(float) utils->scene->lights->color.r / 255.0f, (float) utils->scene->lights->color.g  / 255.0f, (float) utils->scene->lights->color.b  / 255.0f};
-	t_vec3 ambient = (t_vec3) {(float) utils->scene->alight->color.r / 255.0f, (float) utils->scene->alight->color.g / 255.0f, (float) utils->scene->alight->color.b / 255.0f};
+	t_vec3 light_color = utils->scene->lights->color;
+	t_vec3 ambient = utils->scene->alight->color;
 	t_vec3 L = payload.light_direction;
 	t_vec3 N = payload.normal;
 	(void) ambient;
@@ -84,7 +84,7 @@ static t_vec3 F(t_vec3 F0, t_vec3 V, t_vec3 H) // F Schlick
 	t_vec3 Ks = F(F0, V, H);
 	t_vec3 Kd = vec3_subtract((t_vec3) {1.0f, 1.0f, 1.0f}, Ks);
 
-	t_vec3 color = (t_vec3) {(float) payload.object_color.r, (float) payload.object_color.g, (float) payload.object_color.b};
+	t_vec3 color = payload.object_color;
 	t_vec3 lambert = vec3_multiply_scalar(color, 1.0f / (float) PI);
 	
 	t_vec3 cookTorranceNumerator = vec3_multiply_scalar(F(F0, V, H), D(alpha, N, H) * G(alpha, N, V, L));
@@ -100,7 +100,7 @@ static t_vec3 F(t_vec3 F0, t_vec3 V, t_vec3 H) // F Schlick
 	t_vec3 result = vec3_multiply_scalar(vec3_multiply(BRDF, light_color), fmax(LdN, 0.0f));
 
 	return (result);
-}*/
+}
 
 t_vec3 mix(t_vec3 x, t_vec3 y, float a) {
     t_vec3 result;
@@ -113,7 +113,7 @@ t_vec3 mix(t_vec3 x, t_vec3 y, float a) {
 }
 
 
-t_vec3 PBR(t_utils *utils, t_vec3 F0, t_vec3 V, t_vec3 H, t_payload payload)
+/*t_vec3 PBR(t_utils *utils, t_vec3 F0, t_vec3 V, t_vec3 H, t_payload payload)
 {
 	t_vec3 ambient = (t_vec3) {(float) utils->scene->alight->color.r / 255.0f, (float) utils->scene->alight->color.g / 255.0f, (float) utils->scene->alight->color.b / 255.0f};
 	F0 = mix(F0, (t_vec3) {(float) payload.object_color.r / 255.0f, (float) payload.object_color.g / 255.0f, (float) payload.object_color.b / 255.0f}, 0.0f);
@@ -121,5 +121,5 @@ t_vec3 PBR(t_utils *utils, t_vec3 F0, t_vec3 V, t_vec3 H, t_payload payload)
 	float l_dist = payload.hit_distance;
 	intensity = utils->scene->lights->intensity / (l_dist*l_dist);
 
-	
-}
+
+}*/

@@ -23,9 +23,9 @@ typedef struct s_color
 
 typedef struct s_material
 {
-	t_color	color;
+	t_vec3	color;
 	float	reflectivity; //high : mirror / low : piece of paper
-	t_color	light_emmision; 
+	t_vec3	light_emmision; 
 	float	roughness;
 } t_material;
 
@@ -38,14 +38,14 @@ typedef struct s_ray
 typedef struct s_alight
 {
 	float intensity;
-	t_color color;
+	t_vec3 color;
 } t_alight;
 
 typedef struct s_light
 {
 	t_vec3 pos;
 	float intensity;
-	t_color color;
+	t_vec3 color;
 } t_light;
 
 typedef struct s_camera
@@ -62,14 +62,14 @@ typedef struct s_sphere
 	t_vec3 center;
 	float radius;
 	t_material material;
-	t_color color;
+	t_vec3 color;
 } t_sphere;
 
 typedef struct s_plane
 {
 	t_vec3 pos;
 	t_vec3 normal;
-	t_color color;
+	t_vec3 color;
 } t_plane;
 
 
@@ -85,7 +85,7 @@ typedef struct s_cylinder
     t_vec3	direction;
     float	radius;
     float	height;
-    t_color	color;
+    t_vec3	color;
 } t_cylinder;
 
 
