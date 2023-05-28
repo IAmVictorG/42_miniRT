@@ -54,7 +54,7 @@ int is_in_shadow(t_utils *utils, t_vec3 point)
     return 0;
 }
 
-t_vec3 Lambertian(t_payload payload, t_vec3 light_direction, t_vec3 light_color) {
+/*t_vec3 Lambertian(t_payload payload, t_vec3 light_direction, t_vec3 light_color) {
     t_vec3 N = payload.normal;
     t_vec3 object_color = {
 		(float) payload.object_color.x / 255.0f,
@@ -75,9 +75,9 @@ t_vec3 Lambertian(t_payload payload, t_vec3 light_direction, t_vec3 light_color)
     };
 
     return final_color;
-}
+}*/
 
-t_vec3 trace_path(t_utils *utils, t_ray ray, t_vec3 light_color, int depth)
+/*t_vec3 trace_path(t_utils *utils, t_ray ray, t_vec3 light_color, int depth)
 {
 	t_payload	payload;
 	t_vec3		color;
@@ -140,12 +140,190 @@ t_vec3 trace_path(t_utils *utils, t_ray ray, t_vec3 light_color, int depth)
 	}
 	
 	return (t_vec3){color.x, color.y, color.z};
+}*/
+
+t_vec3 fresnelSchlick(float cosTheta, t_vec3 F0)
+{
+    return vec3_multiply_scalar(vec3_add(F0, vec3_subtract((t_vec3) {1.0f, 1.0f, 1.0f}, F0)), pow((1.0f + 0.000001f) - cosTheta, 5.0));
+}
+
+float DistributionGGX(t_vec3 N, t_vec3 H, float roughness)
+{
+    float a      = roughness*roughness;
+    float a2     = a*a;
+    float NdotH  = fmax(vec3_dot_product(N, H), 0.0);
+    float NdotH2 = NdotH*NdotH;
+
+    float nom   = a2;
+    float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom = PI * denom * denom;
+
+    return nom / denom;
+}
+
+float GeometrySchlickGGX(float NdotV, float roughness)
+{
+    float r = (roughness + 1.0);
+    float k = (r*r) / 8.0;
+
+    float nom   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+
+    return nom / denom;
+}
+
+float GeometrySmith(t_vec3 N, t_vec3 V, t_vec3 L, float roughness)
+{
+    float NdotV = fmax(vec3_dot_product(N, V), 0.0);
+    float NdotL = fmax(vec3_dot_product(N, L), 0.0);
+    float ggx2  = GeometrySchlickGGX(NdotV, roughness);
+    float ggx1  = GeometrySchlickGGX(NdotL, roughness);
+
+    return ggx1 * ggx2;
+}
+
+t_ray lightRay(t_vec3 ro, t_light l) //computes ro to light source ray
+{
+	t_ray r;
+
+	r.origin = ro;
+	r.direction = vec3_normalize(vec3_subtract(l.pos, ro));
+    return r;
+ }
+
+ float lightDist(t_vec3 ro, t_light l) //computes distance to light
+{ 
+	return vec3_distance(l.pos, ro);
+}
+
+t_vec3 mix2(t_vec3 x, t_vec3 y, float a) {
+    t_vec3 result;
+
+    result.x = (1.0f - a) * x.x + a * y.x;
+    result.y = (1.0f - a) * x.y + a * y.y;
+    result.z = (1.0f - a) * x.z + a * y.z;
+
+    return result;
+}
+t_vec3 computeReflectance(t_vec3 N, t_vec3 Ve, t_vec3 F0, t_vec3 albedo, t_vec3 L, t_vec3 H, t_vec3 light_col, float intensity, float metallic, float roughness)
+{
+	(void) metallic;
+    t_vec3 radiance =  vec3_multiply_scalar(light_col, intensity); //Incoming Radiance
+
+    // cook-torrance brdf
+    float NDF = DistributionGGX(N, H, roughness);
+    float G   = GeometrySmith(N, Ve, L,roughness);
+    t_vec3 F    = fresnelSchlick(fmax(vec3_dot_product(H, Ve), 0.0f), F0);
+
+    t_vec3 kS = F;
+    t_vec3 kD = vec3_subtract((t_vec3) {1.0f, 1.0f, 1.0f}, kS);
+
+   // kD *= 1.0f - metallic;
+
+    t_vec3 nominator    = vec3_multiply_scalar(F, NDF * G);
+    float denominator = 4 * fmax(vec3_dot_product(N, Ve), 0.0f) * fmax(vec3_dot_product(N, L), 0.0f) + 0.00001f/* avoid divide by zero*/;
+    t_vec3 specular     = vec3_multiply_scalar(nominator, 1.0f / denominator);
+
+
+    // add to outgoing radiance Lo
+    float NdotL = fmax(vec3_dot_product(N, L), 0.0f);
+    t_vec3 diffuse_radiance = vec3_multiply_scalar(vec3_multiply(kD, albedo),  1.0f /  PI);
+
+    return vec3_multiply_scalar(vec3_multiply(vec3_add(diffuse_radiance, specular), radiance), NdotL);
+}
+
+t_vec3 PBR2(t_payload payload, t_ray r,  t_light l)
+{
+    t_vec3 ambient = vec3_multiply((t_vec3) {0.03f, 0.03f, 0.03f}, payload.object_color);
+    //Average F0 for dielectric materials
+    t_vec3 F0 = (t_vec3) {0.04f, 0.04f, 0.04f};
+    // Get Proper F0 if material is not dielectric
+    F0 = mix2(F0, payload.object_color, 1.0f);
+    t_vec3 N = vec3_normalize(payload.normal);
+    t_vec3 Ve = vec3_normalize(vec3_subtract(r.origin, payload.hit_point));
+
+    float intensity = 1.0f;
+
+	float l_dist = lightDist(payload.hit_point,l);
+	intensity = l.intensity/(l_dist*l_dist);
+    
+    t_vec3 l_dir = lightRay(payload.hit_point,l).direction;
+    t_vec3 H = vec3_normalize(vec3_add(Ve, l_dir));
+    return vec3_add(ambient, computeReflectance(N,Ve,F0,payload.object_color,l_dir,H,l.color,intensity,1.0f,0.2f));
 }
 
 
+float length(t_vec3 v)
+{
+	return (sqrtf(v.x*v.x + v.y*v.y + v.z*v.z));
+}
+
+t_vec3 directIllumination(t_utils *utils, t_payload payload, t_ray r, float refl)
+{
+	(void) refl;
+    t_vec3 color = (t_vec3) {0.0f, 0.0f, 0.0f};
+    for(int i = 0 ; i < utils->scene->num_lights ; i++)
+    {
+        t_ray l_ray = lightRay(payload.hit_point, utils->scene->lights[i]);
+		l_ray.origin = vec3_add(payload.hit_point, vec3_multiply_scalar(payload.normal, 0.0001f));
+		//curr_ray.direction = reflect(curr_ray.direction, payload.normal, 0.0f);
+		intersect_object(utils, r, &payload);
+        //float d_light = lightDist(payload.hit_point,utils->scene->lights[i]);
+
+        if(payload.t < 0 || (payload.t >= 0))
+        {
+			color = vec3_add(color, PBR2(payload, r, utils->scene->lights[i]));
+        }
+        else
+        {
+			color = vec3_multiply((t_vec3) {0.03f, 0.03f, 0.03f}, payload.object_color);
+            //color +=  (t_vec3) {0.03f, 0.03f, 0.03f} * payload.material.color * hit.material.ao;
+        }
 
 
+        t_vec3 Ve = vec3_normalize(vec3_subtract(r.origin, payload.hit_point));
+        t_vec3 H = vec3_normalize(vec3_add(Ve, l_ray.direction));
+        refl = length(fresnelSchlick(fmax(vec3_dot_product(H, Ve), 0.0f),  mix2((t_vec3){0.04f,0.04f,0.04f}, payload.object_color, 0.0f)));
+    }
 
+    return color;
+}
+
+t_vec3 trace(t_utils *utils, t_ray r)
+{
+    t_vec3 accum = (t_vec3) {0.0f, 0.0f, 0.0f};
+    t_vec3 mask = (t_vec3) {0.0f, 0.0f, 0.0f};
+	t_payload payload;
+
+    int nb_refl = 2; // Bounce number
+    float c_refl = 1.0f;
+
+    t_ray curr_ray = r;
+    for(int i = 0 ; i <= nb_refl ; i++)
+    {
+		intersect_object(utils, r, &payload);
+        if(payload.t >= 0)
+        {
+            //PBRMat mat = pbr_mat[io.i];
+
+            //t_payload hs = HitSurface(curr_ray.ro + io.d*curr_ray.rd, computeNormal(io,curr_ray),mat);               
+
+            t_vec3 color = directIllumination(utils, payload,curr_ray,c_refl);
+            accum = vec3_add(accum, vec3_multiply(mask, color));
+            mask = vec3_multiply_scalar(mask, c_refl);
+			curr_ray.origin = vec3_add(payload.hit_point, vec3_multiply_scalar(payload.normal, 0.0001f));
+			curr_ray.direction = reflect(curr_ray.direction, payload.normal, 0.0f);
+            //curr_ray  = Ray(hs.hit_point + 0.001*hs.normal,reflect(curr_ray.rd,hs.normal));
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return accum;
+
+}
 /*t_color trace_path(t_utils *utils, t_ray ray, int depth)
 {
 	t_payload	payload;
@@ -248,14 +426,14 @@ void render_image(t_utils *utils)
 {
     t_ray ray;
     t_camera *camera = utils->scene->camera;
-    int depth;
+    //int depth;
     t_color old_color;
     t_color new_color;
-	t_vec3 light_color;
+	//t_vec3 light_color;
 
-	light_color = utils->scene->lights->color;
+	//light_color = utils->scene->lights->color;
 
-    depth = 5;
+    //depth = 5;
 
     for (int y = 0; y < HEIGHT; y++)
     {
@@ -263,7 +441,7 @@ void render_image(t_utils *utils)
         {
             ray.origin = camera->pos;
             ray.direction = calculate_ray_direction(utils, x, y, WIDTH, HEIGHT);
-            t_vec3 color = trace_path(utils, ray, light_color, depth);
+            t_vec3 color = trace(utils, ray);
 			color = reinhard_tone_mapping(color);
             t_color color_converted = (t_color){color.x * 255.0f, color.y * 255.0f, color.z * 255.0f};
 
