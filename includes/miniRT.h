@@ -179,7 +179,7 @@ t_matrix4x4 create_rotation_matrix_axis_angle(t_vec3 axis, float angle);
 
 
 
-t_vec3 PBR(t_utils *utils, t_vec3 F0, t_vec3 V, t_vec3 H, t_payload payload);
+t_vec3 PBR(t_utils *utils, t_material material, t_vec3 V, t_vec3 H, t_payload payload);
 t_vec3 reinhard_tone_mapping(t_vec3 color);
 
 #endif

@@ -102,6 +102,10 @@ static void parse_sphere(t_scene *scene, char *line)
     set_rgb_vector(r, &scene->spheres[i].material.color);
     printf("Sphere position %f,%f,%f | radius %f | Color %f,%f,%f\n", scene->spheres[i].center.x, scene->spheres[i].center.y, scene->spheres[i].center.z, scene->spheres[i].radius, scene->spheres[i].material.color.x, scene->spheres[i].material.color.y, scene->spheres[i].material.color.z);
     free(r);
+    scene->spheres[i].material.roughness = 0.6f;
+    scene->spheres[i].material.light_emmision = (t_vec3) {0.0f, 0.0f, 0.0f};
+    scene->spheres[i].material.reflectivity = 0.0f;
+
     i++;
 }
 
@@ -127,9 +131,9 @@ static void parse_plane(t_scene *scene, char *line)
     free(r);
     go_to_next_arg(&line);
     r = get_arg(line);
-    set_rgb_vector(r, &scene->plans[i].color);
+    set_rgb_vector(r, &scene->plans[i].material.color);
     free(r);
-    printf("Plan Pos %f,%f,%f | Dir %f,%f,%f | Color %f,%f,%f | Normal %f,%f,%f\n", scene->plans[i].pos.x, scene->plans[i].pos.y, scene->plans[i].pos.z, scene->plans[i].normal.x, scene->plans[i].normal.y, scene->plans[i].normal.z, scene->plans[i].color.x, scene->plans[i].color.y, scene->plans[i].color.z, scene->plans[i].normal.x, scene->plans[i].normal.y, scene->plans[i].normal.z);
+    printf("Plan Pos %f,%f,%f | Normal %f,%f,%f | Color %f,%f,%f\n", scene->plans[i].pos.x, scene->plans[i].pos.y, scene->plans[i].pos.z, scene->plans[i].normal.x, scene->plans[i].normal.y, scene->plans[i].normal.z, scene->plans[i].material.color.x, scene->plans[i].material.color.y, scene->plans[i].material.color.z);
     i++;
 }
 

@@ -112,19 +112,20 @@ bool intersect_cylinder(t_ray ray, t_cylinder cylinder, float *t)
 
 bool intersect_plane(t_ray ray, t_plane plane, float *t)
 {
-    float denom = vec3_dot_product(ray.direction, plane.normal);
+    float denominator;
     
-    if (fabs(denom) < 1e-6)
-        return false;
+    denominator = vec3_dot_product(ray.direction, plane.normal);
+    if (fabs(denominator) > 0.1f)
 
-    t_vec3 diff = vec3_subtract(plane.pos, ray.origin);
-    float t_value = vec3_dot_product(diff, plane.normal) / denom;
-
-    if (t_value < 0)
-        return false;
-
-    *t = t_value;
-    return true;
+    {
+        t_vec3 p0l0 = vec3_subtract(plane.pos, ray.origin);
+        *t = vec3_dot_product(p0l0, plane.normal) / denominator;
+        if (*t >= 0.0f)
+        {
+            return (true);
+        }
+    }
+    return (false);
 }
 
 bool intersect_object(t_utils *utils, t_ray ray, t_payload *payload)
@@ -159,7 +160,7 @@ bool intersect_object(t_utils *utils, t_ray ray, t_payload *payload)
                 closest_object_payload.t = payload->t;
                 closest_object_payload.object_type = PLANE;
                 closest_object_payload.object_index = i;
-                closest_object_payload.object_color = utils->scene->plans[i].color;
+                closest_object_payload.object_color = utils->scene->plans[i].material.color;
 
             }
         }

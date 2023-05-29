@@ -24,8 +24,8 @@ typedef struct s_color
 typedef struct s_material
 {
 	t_vec3	color;
-	float	reflectivity; //high : mirror / low : piece of paper
-	t_vec3	light_emmision; 
+	float	reflectivity;
+	t_vec3	light_emmision;
 	float	roughness;
 } t_material;
 
@@ -69,7 +69,7 @@ typedef struct s_plane
 {
 	t_vec3 pos;
 	t_vec3 normal;
-	t_vec3 color;
+	t_material material;
 } t_plane;
 
 

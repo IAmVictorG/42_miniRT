@@ -65,8 +65,9 @@ static t_vec3 F(t_vec3 F0, t_vec3 V, t_vec3 H) // F Schlick
 	return (vec3_add(F0 ,vec3_multiply_scalar(vec3_subtract((t_vec3){1.0f, 1.0f, 1.0f}, F0), powf(1.0f - fmax(vec3_dot_product(H, V), 0.0f), 5.0f))));
 }
 
-t_vec3 PBR(t_utils *utils, t_vec3 F0, t_vec3 V, t_vec3 H, t_payload payload)
+t_vec3 PBR(t_utils *utils, t_material material, t_vec3 V, t_vec3 H, t_payload payload)
 {
+	(void) material;
 	t_vec3 light_color = utils->scene->lights->color;
 	t_vec3 ambient = utils->scene->alight->color;
 	t_vec3 L = payload.light_direction;
@@ -76,6 +77,7 @@ t_vec3 PBR(t_utils *utils, t_vec3 F0, t_vec3 V, t_vec3 H, t_payload payload)
 	float VdN;
 	float LdN;
 
+	t_vec3 F0 = (t_vec3) {0.03f, 0.03f, 0.03f};
 	VdN = vec3_dot_product(V, N);
 	LdN = vec3_dot_product(L, N);
 
@@ -101,6 +103,7 @@ t_vec3 PBR(t_utils *utils, t_vec3 F0, t_vec3 V, t_vec3 H, t_payload payload)
 
 	return (result);
 }
+
 
 t_vec3 mix(t_vec3 x, t_vec3 y, float a) {
     t_vec3 result;
