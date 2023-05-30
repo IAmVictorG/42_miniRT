@@ -93,7 +93,7 @@ t_vec3 perturb_vector(t_vec3 v, float roughness)
     float dz = (float)rand() / RAND_MAX * 2.0f - 1.0f;
 
     random_vector = vec3_multiply_scalar((t_vec3){dx, dy, dz}, roughness);
-    return vec3_add(v, random_vector);
+    return (vec3_add(v, random_vector));
 }
 
 t_vec3 reflect(t_vec3 v, t_vec3 n, float roughness)

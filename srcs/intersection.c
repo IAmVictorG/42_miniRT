@@ -4,7 +4,7 @@ static void calcul_payload(t_utils *utils, t_payload *payload, t_ray ray)
 {
     payload->hit_distance = payload->t;
     payload->hit_point = vec3_add(ray.origin, vec3_multiply_scalar(ray.direction, payload->hit_distance));
-    payload->light_direction = vec3_normalize(vec3_add(utils->scene->lights->pos, vec3_multiply_scalar(payload->hit_point, -1)));
+    payload->light_direction = vec3_normalize(vec3_subtract(utils->scene->lights->pos, payload->hit_point));
     if (payload->object_type == SPHERE)
 	    payload->normal = vec3_normalize(vec3_add(payload->hit_point, vec3_multiply_scalar(utils->scene->spheres[payload->object_index].center, -1)));
     else if (payload->object_type == PLANE)
@@ -22,8 +22,6 @@ static void calcul_payload(t_utils *utils, t_payload *payload, t_ray ray)
         t_vec3 edge2 = vec3_subtract(utils->scene->triangles[payload->object_index].vertices[2], utils->scene->triangles[payload->object_index].vertices[0]);
         payload->normal = vec3_normalize(vec3_cross_product(edge1, edge2));
     }
-
-
 }
 
 static bool intersect_sphere(t_ray ray, t_sphere sphere, float *t)
@@ -73,7 +71,7 @@ bool intersect_triangle(t_ray ray, t_triangle triangle, float *t)
     if (v < 0.0 || u + v > 1.0)
         return false;
     float temp = f * vec3_dot_product(edge2, q);
-    if (temp > 0.00001) // ray intersection
+    if (temp > 0.00001f) // ray intersection
     {
         *t = temp;
         return true;
@@ -115,7 +113,7 @@ bool intersect_plane(t_ray ray, t_plane plane, float *t)
     float denominator;
     
     denominator = vec3_dot_product(ray.direction, plane.normal);
-    if (fabs(denominator) > 0.1f)
+    if (fabs(denominator) > 0.001f)
 
     {
         t_vec3 p0l0 = vec3_subtract(plane.pos, ray.origin);
