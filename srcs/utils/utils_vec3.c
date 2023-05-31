@@ -99,7 +99,8 @@ t_vec3 perturb_vector(t_vec3 v, float roughness)
 t_vec3 reflect(t_vec3 v, t_vec3 n, float roughness)
 {
     t_vec3 perfect_reflection;
-
+    (void) roughness;
     perfect_reflection = vec3_subtract(v, vec3_multiply_scalar(n, 2.0f * vec3_dot_product(v, n)));
     return perturb_vector(perfect_reflection, roughness);
+    //return perfect_reflection;
 }

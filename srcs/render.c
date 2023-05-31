@@ -2,7 +2,7 @@
 
 float r2()
 {
-    return (float)rand() / (float)RAND_MAX ;
+    return (2.0f * (float)rand()) / (3.0f*(float)RAND_MAX) ;
 }
 
 t_vec3 clamp_color(t_vec3 color)
@@ -119,8 +119,9 @@ t_vec3 trace_path(t_utils *utils, t_ray ray, int depth)
 	t_vec3		light_vector;
 	t_material	material;
 	t_vec3		hit_point;
+	float		factor;
 
-
+	factor = 1.0f;
 	color = (t_vec3) {0.0f, 0.0f, 0.0f};
 	sky_color = (t_vec3) {0.7f, 0.6f, 0.8f};
 	if (depth == 0)
@@ -142,16 +143,22 @@ t_vec3 trace_path(t_utils *utils, t_ray ray, int depth)
 				//color = (t_vec3) {0.0f, 0.0f, 0.0f};
 
 				color = vec3_multiply_scalar(albedo, utils->scene->alight->intensity);
+
 			}
 			else
 			{
-				t_vec3 V = vec3_normalize(vec3_subtract(utils->scene->camera->pos, hit_point));
+				/*t_vec3 V = vec3_normalize(vec3_subtract(utils->scene->camera->pos, hit_point));
 				t_vec3 H = vec3_normalize(vec3_add(V, light_vector));
-				color = PBR(utils, material, V, H, payload);
+				color = PBR(utils, material, V, H, payload);*/
+				/*if (color.x < vec3_multiply_scalar(albedo, utils->scene->alight->intensity).x)
+				{
+					color.x = vec3_multiply_scalar(albedo, utils->scene->alight->intensity).x;
+				}*/
+
 				//color = vec3_multiply_scalar(albedo, vec3_dot_product(payload.normal, light_vector));
 
-
-				//color = vec3_multiply_scalar(albedo, (fmin(vec3_dot_product(payload.normal, light_vector) + utils->scene->alight->intensity, 1.0f)));
+				//color = vec3_multiply_scalar(color, factor);
+				color = vec3_multiply_scalar(albedo, (fmin(vec3_dot_product(payload.normal, light_vector) + utils->scene->alight->intensity, 1.0f)));
 
 
 
@@ -160,7 +167,7 @@ t_vec3 trace_path(t_utils *utils, t_ray ray, int depth)
 				//color = vec3_add(color, vec3_multiply_scalar(albedo, utils->scene->alight->intensity));
 			}
 			if (payload.object_type == SPHERE)
-				material.roughness = 0.0f;
+				material.roughness = 0.01f;
 			if (payload.object_type == PLANE)
 				material.roughness = 1.0f;
 			ray.direction = reflect(ray.direction, payload.normal, material.roughness);
@@ -169,13 +176,13 @@ t_vec3 trace_path(t_utils *utils, t_ray ray, int depth)
 		else
 		{
 			color = sky_color;
+			//color = vec3_multiply_scalar(color, factor);
+			//color = vec3_add(color, vec3_multiply_scalar(sky_color, 1.0f - factor));
 			break;
 		}
 	}
-	
 	return color;
 }
-
 
 void render_image(t_utils *utils)
 {
@@ -187,7 +194,7 @@ void render_image(t_utils *utils)
 
 	//light_color = utils->scene->lights->color;
 
-    depth = 2;
+    depth = 3;
 
     for (int y = 0; y < HEIGHT; y++)
     {

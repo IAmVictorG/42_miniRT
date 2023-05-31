@@ -81,7 +81,7 @@ t_vec3 PBR(t_utils *utils, t_material material, t_vec3 V, t_vec3 H, t_payload pa
 	VdN = vec3_dot_product(V, N);
 	LdN = vec3_dot_product(L, N);
 
-	float roughness = 0.2f;
+	float roughness = material.roughness;
 	float alpha = roughness * roughness;
 	t_vec3 Ks = F(F0, V, H);
 	t_vec3 Kd = vec3_subtract((t_vec3) {1.0f, 1.0f, 1.0f}, Ks);
