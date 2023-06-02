@@ -16,8 +16,8 @@
 # include "libft.h"
 # include "scene.h"
 
-# define WIDTH	1000
-# define HEIGHT 700
+# define WIDTH	600
+# define HEIGHT 500
 
 # define MAC_KEY_LEFT   123
 # define MAC_KEY_RIGHT  124

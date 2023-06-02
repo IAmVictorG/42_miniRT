@@ -55,37 +55,24 @@ t_vec3 calculate_ray_direction(t_utils *utils, int pixel_x, int pixel_y, int ima
 int is_in_shadow(t_utils *utils, t_vec3 point)
 {
     t_ray shadow_ray;
-	t_payload payload;
+    t_payload payload;
 
-	for (int i = 0; i < utils->scene->num_lights; i++)
-	{
-		shadow_ray.direction = vec3_normalize(vec3_subtract(utils->scene->lights[i].pos, point));
-		shadow_ray.origin = point;
+    for (int j = 0; j < utils->scene->num_lights; j++)
+    {
+        shadow_ray.direction = vec3_normalize(vec3_subtract(utils->scene->lights[j].pos, point));
+        shadow_ray.origin = point;
 
-		for (int i = 0; i < utils->scene->num_spheres; i++)
-		{
-			if (intersect_object(utils, shadow_ray, &payload) == true && payload.hit_distance >= 0.0f)
-			{
-				if (vec3_distance(point, utils->scene->lights[i].pos) > vec3_distance(point, vec3_add(shadow_ray.origin, vec3_multiply_scalar(shadow_ray.direction, payload.hit_distance))))
-				{
-					return 1;
-				}
-			}
-		}
-		for (int i = 0; i < utils->scene->num_plans; i++)
-		{
-			if (intersect_object(utils, shadow_ray, &payload) == true && payload.hit_distance >= 0.0f)
-			{
-				if (vec3_distance(point, utils->scene->lights[i].pos) > vec3_distance(point, vec3_add(shadow_ray.origin, vec3_multiply_scalar(shadow_ray.direction, payload.hit_distance))))
-				{
-					return 1;
-				}
-			}
-		}
-		
-	}
+        if (intersect_object(utils, shadow_ray, &payload) == true && payload.hit_distance >= 0.0f)
+        {
+            if (vec3_distance(point, utils->scene->lights[j].pos) > vec3_distance(point, vec3_add(shadow_ray.origin, vec3_multiply_scalar(shadow_ray.direction, payload.hit_distance))))
+            {
+                return 1;
+            }
+        }
+    }
     return 0;
 }
+
 
 /*t_vec3 Lambertian(t_payload payload, t_vec3 light_direction, t_vec3 light_color) {
     t_vec3 N = payload.normal;
@@ -194,7 +181,7 @@ void render_image(t_utils *utils)
 
 	//light_color = utils->scene->lights->color;
 
-    depth = 3;
+    depth = 1;
 
     for (int y = 0; y < HEIGHT; y++)
     {
